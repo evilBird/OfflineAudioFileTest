@@ -10,46 +10,6 @@
 
 @implementation OfflineAudioFileProcessor
 
-+ (NSString *)testFileName
-{
-        NSString *fileName = @"faure_sicilienne_violin.48o.wav";
-    return fileName;
-}
-
-+ (NSString *)testSourceFilePath
-{
-    NSString *testFileName = [OfflineAudioFileProcessor testFileName];
-    NSString *sourceFilePath = [[NSBundle bundleForClass:[self class]]pathForResource:[testFileName stringByDeletingPathExtension] ofType:[testFileName pathExtension]];
-    return sourceFilePath;
-}
-
-+ (NSString *)testResultPath
-{
-    NSString *tempFolderPath = NSTemporaryDirectory();
-    NSString *resultFilePath = [tempFolderPath stringByAppendingPathComponent:[OfflineAudioFileProcessor testFileName]];
-    return resultFilePath;
-}
-
-
-+ (void)test
-{
-    NSString *sourceFilePath = [OfflineAudioFileProcessor testSourceFilePath];
-    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPath];
-    
-    [OfflineAudioFileProcessor processFile:sourceFilePath withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
-        Float32 *samples = (Float32 *)(buffer->mBuffers[0].mData);
-        Float32 scale = 2.0;
-        vDSP_vsmul(samples, 1, &scale, samples, 1, bufferSize);
-        return noErr;
-    } maxBufferSize:1024 resultPath:resultFilePath completion:^(NSString *resultPath, NSError *error) {
-        if (!error) {
-            NSLog(@"finished writing audio file to path: %@",resultPath);
-        }else{
-            NSAssert(nil==error, @"ERROR WRITING FILE: %@",error);
-        }
-    }];
-}
-
 + (void)processFile:(NSString *)sourceFilePath withBlock:(AudioProcessingBlock)processingBlock maxBufferSize:(AVAudioFrameCount)maxBufferSize resultPath:(NSString *)resultPath completion:(void(^)(NSString *resultPath, NSError *error))completion
 {
     NSError *err = nil;
@@ -117,9 +77,60 @@
             NSLog(@"FRAME POSITIONS DIFFER: SOURCE = %lld, RESULT = %lld",sourceFile.framePosition,resultFile.framePosition);
         }
     }
+    sourceFile = nil;
+    resultFile = nil;
     [[AVAudioSession sharedInstance]setActive:NO error:nil];
     completion(resultPath,err);
 }
 
++ (void)analyzeFile:(NSString *)sourceFilePath
+          withBlock:(AudioAnalysisBlock)analysisBlock
+      maxBufferSize:(AVAudioFrameCount)maxBufferSize
+         completion:(void(^)(NSError *error))completion
+{
+    NSError *err = nil;
+    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryAudioProcessing error:&err];
+    if (err) {
+        return completion(err);
+    }
+    [[AVAudioSession sharedInstance]setActive:YES error:&err];
+    
+    if (err) {
+        return completion(err);
+    }
+    
+    NSURL *sourceFileURL = [NSURL fileURLWithPath:sourceFilePath];
+    AVAudioFile *sourceFile = [[AVAudioFile alloc]initForReading:sourceFileURL error:&err];
+    if (err) {
+        return completion(err);
+    }
+    
+    AVAudioFormat *sourceFileFormat = sourceFile.processingFormat;
+    AVAudioFrameCount numSourceFrames = (AVAudioFrameCount)sourceFile.length;
+    AVAudioFrameCount numSourceFramesRemaining = numSourceFrames;
+    sourceFile.framePosition = 0;
+    while (numSourceFramesRemaining) {
+        
+        AVAudioFrameCount bufferSize = ( numSourceFramesRemaining >= maxBufferSize ) ? ( maxBufferSize ) : ( numSourceFramesRemaining );
+        AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:sourceFileFormat frameCapacity:bufferSize];
+        
+        [sourceFile readIntoBuffer:buffer frameCount:bufferSize error:&err];
+        
+        if (err) {
+            break;
+        }
+        
+        AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
+        OSStatus status = analysisBlock(bufferList, bufferSize);
+        if (status!=noErr) {
+            break;
+        }
+        
+        numSourceFramesRemaining-=bufferSize;
+    }
+    [[AVAudioSession sharedInstance]setActive:NO error:nil];
+    sourceFile = nil;
+    completion(err);
+}
 
 @end
