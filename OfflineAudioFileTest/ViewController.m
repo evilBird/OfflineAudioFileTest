@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "OfflineAudioFileProcessor.h"
+#import "AudioNormalizeProcessor.h"
+
 @interface ViewController ()
 
 @end
@@ -16,7 +18,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [OfflineAudioFileProcessor test];
+    
+    AudioNormalizeProcessor *normalizer = [AudioNormalizeProcessor new];
+    
+    [OfflineAudioFileProcessor
+     processFile:[OfflineAudioFileProcessor testSourceFilePath]
+     withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
+
+         Float32 *samples = buffer->mBuffers[0].mData;
+         [normalizer processBuffer:buffer withSize:(NSUInteger)bufferSize];
+         return noErr;
+     }
+     maxBufferSize:2048
+     resultPath:[OfflineAudioFileProcessor testResultPath]
+     completion:^(NSString *resultPath, NSError *error) {
+         NSAssert(nil==error, @"ERROR: %@",error);
+         NSLog(@"Finished writing audio file to path: %@",resultPath);
+     }];
     // Do any additional setup after loading the view, typically from a nib.
 }
 

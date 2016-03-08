@@ -1,0 +1,445 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F2E4A2B51C8E482500E86A5F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2B41C8E482500E86A5F /* main.m */; };
+		F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2B71C8E482500E86A5F /* AppDelegate.m */; };
+		F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2BA1C8E482500E86A5F /* ViewController.m */; };
+		F2E4A2BE1C8E482500E86A5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2BC1C8E482500E86A5F /* Main.storyboard */; };
+		F2E4A2C01C8E482500E86A5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2BF1C8E482500E86A5F /* Assets.xcassets */; };
+		F2E4A2C31C8E482500E86A5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2C11C8E482500E86A5F /* LaunchScreen.storyboard */; };
+		F2E4A2CE1C8E482500E86A5F /* OfflineAudioFileTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2CD1C8E482500E86A5F /* OfflineAudioFileTestTests.m */; };
+		F2E4A2D91C8E483300E86A5F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E4A2D81C8E483300E86A5F /* AVFoundation.framework */; };
+		F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */; };
+		F2E4A2E11C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */; };
+		F2E4A2E21C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
+		F2E4A2E41C8E537200E86A5F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E4A2E31C8E537200E86A5F /* Accelerate.framework */; };
+		F2E4A2EA1C8E723700E86A5F /* AudioNormalizeProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2E91C8E723700E86A5F /* AudioNormalizeProcessor.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F2E4A2CA1C8E482500E86A5F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F2E4A2A81C8E482400E86A5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F2E4A2AF1C8E482400E86A5F;
+			remoteInfo = OfflineAudioFileTest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F2E4A2B01C8E482400E86A5F /* OfflineAudioFileTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineAudioFileTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2E4A2B41C8E482500E86A5F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F2E4A2B61C8E482500E86A5F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F2E4A2B71C8E482500E86A5F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F2E4A2B91C8E482500E86A5F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F2E4A2BA1C8E482500E86A5F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F2E4A2BD1C8E482500E86A5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F2E4A2BF1C8E482500E86A5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F2E4A2C21C8E482500E86A5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F2E4A2C41C8E482500E86A5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F2E4A2C91C8E482500E86A5F /* OfflineAudioFileTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OfflineAudioFileTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2E4A2CD1C8E482500E86A5F /* OfflineAudioFileTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OfflineAudioFileTestTests.m; sourceTree = "<group>"; };
+		F2E4A2CF1C8E482500E86A5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F2E4A2D81C8E483300E86A5F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioFileProcessor.h; sourceTree = "<group>"; };
+		F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfflineAudioFileProcessor.m; sourceTree = "<group>"; };
+		F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = faure_sicilienne_violin.48o.wav; sourceTree = "<group>"; };
+		F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = faure_sicilienne_violin.48k.wav; sourceTree = "<group>"; };
+		F2E4A2E31C8E537200E86A5F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		F2E4A2E81C8E723700E86A5F /* AudioNormalizeProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNormalizeProcessor.h; sourceTree = "<group>"; };
+		F2E4A2E91C8E723700E86A5F /* AudioNormalizeProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioNormalizeProcessor.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F2E4A2AD1C8E482400E86A5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2E4A2E41C8E537200E86A5F /* Accelerate.framework in Frameworks */,
+				F2E4A2D91C8E483300E86A5F /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2E4A2C61C8E482500E86A5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F2E4A2A71C8E482400E86A5F = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2E31C8E537200E86A5F /* Accelerate.framework */,
+				F2E4A2D81C8E483300E86A5F /* AVFoundation.framework */,
+				F2E4A2B21C8E482500E86A5F /* OfflineAudioFileTest */,
+				F2E4A2CC1C8E482500E86A5F /* OfflineAudioFileTestTests */,
+				F2E4A2B11C8E482400E86A5F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F2E4A2B11C8E482400E86A5F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2B01C8E482400E86A5F /* OfflineAudioFileTest.app */,
+				F2E4A2C91C8E482500E86A5F /* OfflineAudioFileTestTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F2E4A2B21C8E482500E86A5F /* OfflineAudioFileTest */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2B61C8E482500E86A5F /* AppDelegate.h */,
+				F2E4A2B71C8E482500E86A5F /* AppDelegate.m */,
+				F2E4A2B91C8E482500E86A5F /* ViewController.h */,
+				F2E4A2BA1C8E482500E86A5F /* ViewController.m */,
+				F2E4A2BC1C8E482500E86A5F /* Main.storyboard */,
+				F2E4A2BF1C8E482500E86A5F /* Assets.xcassets */,
+				F2E4A2C11C8E482500E86A5F /* LaunchScreen.storyboard */,
+				F2E4A2C41C8E482500E86A5F /* Info.plist */,
+				F2E4A2B31C8E482500E86A5F /* Supporting Files */,
+				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
+				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F2E4A2E81C8E723700E86A5F /* AudioNormalizeProcessor.h */,
+				F2E4A2E91C8E723700E86A5F /* AudioNormalizeProcessor.m */,
+			);
+			path = OfflineAudioFileTest;
+			sourceTree = "<group>";
+		};
+		F2E4A2B31C8E482500E86A5F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */,
+				F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */,
+				F2E4A2B41C8E482500E86A5F /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F2E4A2CC1C8E482500E86A5F /* OfflineAudioFileTestTests */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2CD1C8E482500E86A5F /* OfflineAudioFileTestTests.m */,
+				F2E4A2CF1C8E482500E86A5F /* Info.plist */,
+			);
+			path = OfflineAudioFileTestTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F2E4A2AF1C8E482400E86A5F /* OfflineAudioFileTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2E4A2D21C8E482500E86A5F /* Build configuration list for PBXNativeTarget "OfflineAudioFileTest" */;
+			buildPhases = (
+				F2E4A2AC1C8E482400E86A5F /* Sources */,
+				F2E4A2AD1C8E482400E86A5F /* Frameworks */,
+				F2E4A2AE1C8E482400E86A5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OfflineAudioFileTest;
+			productName = OfflineAudioFileTest;
+			productReference = F2E4A2B01C8E482400E86A5F /* OfflineAudioFileTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F2E4A2C81C8E482500E86A5F /* OfflineAudioFileTestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2E4A2D51C8E482500E86A5F /* Build configuration list for PBXNativeTarget "OfflineAudioFileTestTests" */;
+			buildPhases = (
+				F2E4A2C51C8E482500E86A5F /* Sources */,
+				F2E4A2C61C8E482500E86A5F /* Frameworks */,
+				F2E4A2C71C8E482500E86A5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F2E4A2CB1C8E482500E86A5F /* PBXTargetDependency */,
+			);
+			name = OfflineAudioFileTestTests;
+			productName = OfflineAudioFileTestTests;
+			productReference = F2E4A2C91C8E482500E86A5F /* OfflineAudioFileTestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F2E4A2A81C8E482400E86A5F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = birdSound;
+				TargetAttributes = {
+					F2E4A2AF1C8E482400E86A5F = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					F2E4A2C81C8E482500E86A5F = {
+						CreatedOnToolsVersion = 7.2.1;
+						TestTargetID = F2E4A2AF1C8E482400E86A5F;
+					};
+				};
+			};
+			buildConfigurationList = F2E4A2AB1C8E482400E86A5F /* Build configuration list for PBXProject "OfflineAudioFileTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F2E4A2A71C8E482400E86A5F;
+			productRefGroup = F2E4A2B11C8E482400E86A5F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F2E4A2AF1C8E482400E86A5F /* OfflineAudioFileTest */,
+				F2E4A2C81C8E482500E86A5F /* OfflineAudioFileTestTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F2E4A2AE1C8E482400E86A5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2E4A2E11C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav in Resources */,
+				F2E4A2C31C8E482500E86A5F /* LaunchScreen.storyboard in Resources */,
+				F2E4A2E21C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav in Resources */,
+				F2E4A2C01C8E482500E86A5F /* Assets.xcassets in Resources */,
+				F2E4A2BE1C8E482500E86A5F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2E4A2C71C8E482500E86A5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F2E4A2AC1C8E482400E86A5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */,
+				F2E4A2EA1C8E723700E86A5F /* AudioNormalizeProcessor.m in Sources */,
+				F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */,
+				F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */,
+				F2E4A2B51C8E482500E86A5F /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2E4A2C51C8E482500E86A5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2E4A2CE1C8E482500E86A5F /* OfflineAudioFileTestTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F2E4A2CB1C8E482500E86A5F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F2E4A2AF1C8E482400E86A5F /* OfflineAudioFileTest */;
+			targetProxy = F2E4A2CA1C8E482500E86A5F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F2E4A2BC1C8E482500E86A5F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F2E4A2BD1C8E482500E86A5F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F2E4A2C11C8E482500E86A5F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F2E4A2C21C8E482500E86A5F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F2E4A2D01C8E482500E86A5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F2E4A2D11C8E482500E86A5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F2E4A2D31C8E482500E86A5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = OfflineAudioFileTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = birdSound.OfflineAudioFileTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F2E4A2D41C8E482500E86A5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = OfflineAudioFileTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = birdSound.OfflineAudioFileTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F2E4A2D61C8E482500E86A5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OfflineAudioFileTestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = birdSound.OfflineAudioFileTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineAudioFileTest.app/OfflineAudioFileTest";
+			};
+			name = Debug;
+		};
+		F2E4A2D71C8E482500E86A5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OfflineAudioFileTestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = birdSound.OfflineAudioFileTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineAudioFileTest.app/OfflineAudioFileTest";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F2E4A2AB1C8E482400E86A5F /* Build configuration list for PBXProject "OfflineAudioFileTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2E4A2D01C8E482500E86A5F /* Debug */,
+				F2E4A2D11C8E482500E86A5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2E4A2D21C8E482500E86A5F /* Build configuration list for PBXNativeTarget "OfflineAudioFileTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2E4A2D31C8E482500E86A5F /* Debug */,
+				F2E4A2D41C8E482500E86A5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		F2E4A2D51C8E482500E86A5F /* Build configuration list for PBXNativeTarget "OfflineAudioFileTestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2E4A2D61C8E482500E86A5F /* Debug */,
+				F2E4A2D71C8E482500E86A5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F2E4A2A81C8E482400E86A5F /* Project object */;
+}

@@ -15,6 +15,9 @@ typedef OSStatus (^AudioProcessingBlock)(AudioBufferList *buffer, AVAudioFrameCo
 @interface OfflineAudioFileProcessor : NSObject
 
 + (void)test;
++ (NSString *)testFileName;
++ (NSString *)testSourceFilePath;
++ (NSString *)testResultPath;
 
 + (void)processFile:(NSString *)sourceFilePath
           withBlock:(AudioProcessingBlock)processingBlock

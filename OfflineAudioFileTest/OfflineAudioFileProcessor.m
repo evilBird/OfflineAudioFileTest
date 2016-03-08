@@ -10,12 +10,32 @@
 
 @implementation OfflineAudioFileProcessor
 
++ (NSString *)testFileName
+{
+        NSString *fileName = @"faure_sicilienne_violin.48o.wav";
+    return fileName;
+}
+
++ (NSString *)testSourceFilePath
+{
+    NSString *testFileName = [OfflineAudioFileProcessor testFileName];
+    NSString *sourceFilePath = [[NSBundle bundleForClass:[self class]]pathForResource:[testFileName stringByDeletingPathExtension] ofType:[testFileName pathExtension]];
+    return sourceFilePath;
+}
+
++ (NSString *)testResultPath
+{
+    NSString *tempFolderPath = NSTemporaryDirectory();
+    NSString *resultFilePath = [tempFolderPath stringByAppendingPathComponent:[OfflineAudioFileProcessor testFileName]];
+    return resultFilePath;
+}
+
+
 + (void)test
 {
-    NSString *fileName = @"faure_sicilienne_violin.48o.wav";
-    NSString *sourceFilePath = [[NSBundle bundleForClass:[self class]]pathForResource:[fileName stringByDeletingPathExtension] ofType:[fileName pathExtension]];
-    NSString *tempFolderPath = NSTemporaryDirectory();
-    NSString *resultFilePath = [tempFolderPath stringByAppendingPathComponent:fileName];
+    NSString *sourceFilePath = [OfflineAudioFileProcessor testSourceFilePath];
+    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPath];
+    
     [OfflineAudioFileProcessor processFile:sourceFilePath withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
         Float32 *samples = (Float32 *)(buffer->mBuffers[0].mData);
         Float32 scale = 2.0;
@@ -97,7 +117,7 @@
             NSLog(@"FRAME POSITIONS DIFFER: SOURCE = %lld, RESULT = %lld",sourceFile.framePosition,resultFile.framePosition);
         }
     }
-
+    [[AVAudioSession sharedInstance]setActive:NO error:nil];
     completion(resultPath,err);
 }
 
