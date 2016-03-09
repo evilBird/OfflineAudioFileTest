@@ -4,7 +4,9 @@
   "summary": "AVFoundation-based utilities for offline audio file processing.",
   "homepage": "https://github.com/evilBird/OfflineAudioFileTest",
   "license": "MIT",
-  "author": "Travis Henspeter",
+  "authors": [
+  	"Travis Henspeter"
+  ],
   "source": {
     "git": "https://github.com/evilBird/OfflineAudioFileTest.git",
     "tag": "0.0.1"
