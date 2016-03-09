@@ -85,6 +85,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F263DF011C8F8CBA00F0464C /* OfflineAudioFileProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
+				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */,
+				F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */,
+				F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */,
+			);
+			name = OfflineAudioFileProcessor;
+			sourceTree = "<group>";
+		};
+		F263DF021C8F8CCD00F0464C /* AudioSpectrumProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				F212471A1C8F53C100C54911 /* AudioSpectrumProcessor.h */,
+				F212471B1C8F53C100C54911 /* AudioSpectrumProcessor.m */,
+				F212471D1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.h */,
+				F212471E1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m */,
+			);
+			name = AudioSpectrumProcessor;
+			sourceTree = "<group>";
+		};
 		F2E4A2A71C8E482400E86A5F = {
 			isa = PBXGroup;
 			children = (
@@ -117,15 +140,8 @@
 				F2E4A2C11C8E482500E86A5F /* LaunchScreen.storyboard */,
 				F2E4A2C41C8E482500E86A5F /* Info.plist */,
 				F2E4A2B31C8E482500E86A5F /* Supporting Files */,
-				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
-				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
-				F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */,
-				F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */,
-				F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */,
-				F212471A1C8F53C100C54911 /* AudioSpectrumProcessor.h */,
-				F212471B1C8F53C100C54911 /* AudioSpectrumProcessor.m */,
-				F212471D1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.h */,
-				F212471E1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m */,
+				F263DF011C8F8CBA00F0464C /* OfflineAudioFileProcessor */,
+				F263DF021C8F8CCD00F0464C /* AudioSpectrumProcessor */,
 			);
 			path = OfflineAudioFileTest;
 			sourceTree = "<group>";
