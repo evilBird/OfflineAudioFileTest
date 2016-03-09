@@ -45,8 +45,7 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 @interface OfflineAudioFileProcessor (Normalizer)
 
-+ (Float32)getPeakMagnitudeForBuffer:(AudioBufferList *)bufferList bufferSize:(NSUInteger)bufferSize;
-+ (AudioProcessingBlock)normalizeProcessingBlockWithPeakMagnitude:(Float32)peakMagnitude;
++ (AudioProcessingBlock)normalizeProcessingBlockForAudioFile:(NSString *)audioFilePath maximumMagnitude:(Float32)maximumMagnitude;
 
 @end
 

@@ -25,6 +25,8 @@
 		F2E4A2E21C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
 		F2E4A2E41C8E537200E86A5F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E4A2E31C8E537200E86A5F /* Accelerate.framework */; };
 		F2E60A351C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */; };
+		F2E60A3A1C90BABF00A58227 /* faure_sicilienne_violin.48o.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */; };
+		F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -260,6 +262,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2E60A3A1C90BABF00A58227 /* faure_sicilienne_violin.48o.wav in Resources */,
+				F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
