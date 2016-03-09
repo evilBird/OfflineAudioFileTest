@@ -127,4 +127,29 @@ OSStatus compress
     return [compressionBlock copy];
 }
 
++ (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
+                                                       threshold:(Float32)threshold
+                                                           slope:(Float32)slope
+                                                       lookaheadTime:(Float32)lookahead_ms
+                                                          windowTime:(Float32)window_ms
+                                                      attackTime:(Float32)attack_ms
+                                                     releaseTime:(Float32)release_ms
+
+{
+    AudioProcessingBlock compressionBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
+        
+        return compress(buffer,
+                        (UInt32)bufferSize,
+                        threshold,
+                        slope,
+                        (UInt32)sampleRate,
+                        lookahead_ms,
+                        window_ms,
+                        attack_ms,
+                        release_ms);
+    };
+    
+    return [compressionBlock copy];
+}
+
 @end

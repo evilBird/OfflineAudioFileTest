@@ -33,6 +33,14 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 + (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
 
++ (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
+                                                       threshold:(Float32)threshold
+                                                           slope:(Float32)slope
+                                                   lookaheadTime:(Float32)lookahead_ms
+                                                      windowTime:(Float32)window_ms
+                                                      attackTime:(Float32)attack_ms
+                                                     releaseTime:(Float32)release_ms;
+
 @end
 
 @interface OfflineAudioFileProcessor (Normalizer)
