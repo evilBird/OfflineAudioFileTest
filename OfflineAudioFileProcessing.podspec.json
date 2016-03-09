@@ -1,0 +1,25 @@
+{
+  "name": "OfflineAudioFileProcessing",
+  "version": "0.0.1",
+  "summary": "AVFoundation-based utilities for offline audio file processing.",
+  "homepage": "https://github.com/evilBird/OfflineAudioFileTest",
+  "license": "MIT",
+  "author": "Travis Henspeter",
+  "source": {
+    "git": "https://github.com/evilBird/OfflineAudioFileTest.git",
+    "tag": "0.0.1"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": [
+	  "OfflineAudioFileTest/OfflineAudioFileProcessor*.{h,m}",
+	  "OfflineAudioFileTest/AudioSpectrumProcessor*.{h,m}"
+    ],
+  "frameworks": [
+    "Foundation",
+    "AVFoundation",
+    "Accelerate"
+  ]
+}
