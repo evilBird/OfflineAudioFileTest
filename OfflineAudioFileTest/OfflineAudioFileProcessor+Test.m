@@ -10,23 +10,22 @@
 
 @implementation OfflineAudioFileProcessor (Test)
 
-+ (NSString *)testFileName
++ (NSString *)testAccompFileName
 {
     NSString *fileName = @"faure_sicilienne_violin.48o.wav";
     return fileName;
 }
 
-+ (NSString *)testSourceFilePath
++ (NSString *)testSoloFileName
 {
-    NSString *testFileName = [OfflineAudioFileProcessor testFileName];
-    NSString *sourceFilePath = [[NSBundle bundleForClass:[self class]]pathForResource:[testFileName stringByDeletingPathExtension] ofType:[testFileName pathExtension]];
-    return sourceFilePath;
+    NSString *fileName = @"faure_sicilienne_violin.48k.wav";
+    return fileName;
 }
 
-+ (NSString *)testTempFilePath
++ (NSString *)testSourceFilePathForFile:(NSString *)testFileName
 {
-    NSString *testFileName = [OfflineAudioFileProcessor testFileName];
-    return [OfflineAudioFileProcessor tempFilePathForFile:testFileName];
+    NSString *sourceFilePath = [[NSBundle bundleForClass:[self class]]pathForResource:[testFileName stringByDeletingPathExtension] ofType:[testFileName pathExtension]];
+    return sourceFilePath;
 }
 
 + (NSString *)tempFilePathForFile:(NSString *)fileName
@@ -40,6 +39,13 @@
         [fm removeItemAtPath:tempFilePath error:nil];
     }
     return tempFilePath;
+}
+
++ (NSString *)testResultPathForFile:(NSString *)fileName
+{
+    NSString *tempFolderPath = NSTemporaryDirectory();
+    NSString *resultFilePath = [tempFolderPath stringByAppendingPathComponent:fileName];
+    return resultFilePath;
 }
 
 + (void)deleteTempFilesForFile:(NSString *)fileName
@@ -58,18 +64,11 @@
     }
 }
 
-+ (NSString *)testResultPath
-{
-    NSString *tempFolderPath = NSTemporaryDirectory();
-    NSString *resultFilePath = [tempFolderPath stringByAppendingPathComponent:[OfflineAudioFileProcessor testFileName]];
-    return resultFilePath;
-}
 
-
-+ (void)test
++ (void)testFile:(NSString *)testFileName
 {
-    NSString *sourceFilePath = [OfflineAudioFileProcessor testSourceFilePath];
-    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPath];
+    NSString *sourceFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:testFileName];
+    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPathForFile:testFileName];
     
     [OfflineAudioFileProcessor processFile:sourceFilePath withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
         Float32 *samples = (Float32 *)(buffer->mBuffers[0].mData);

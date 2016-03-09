@@ -29,10 +29,10 @@
 {
     kBlockSize = 1024;
     kSampleRate = 48000;
-    NSString *testFileName = [OfflineAudioFileProcessor testFileName];
-    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePath];
+    NSString *testFileName = [OfflineAudioFileProcessor testSoloFileName];
+    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:testFileName];
     NSString *intermediateFilePath = [OfflineAudioFileProcessor tempFilePathForFile:testFileName];
-    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPath];
+    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPathForFile:testFileName];
     
     __block Float32 myPeak = 0.0;
     

@@ -60,12 +60,12 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 @interface OfflineAudioFileProcessor (Test)
 
-+ (void)test;
-+ (NSString *)testFileName;
-+ (NSString *)testSourceFilePath;
-+ (NSString *)testTempFilePath;
-+ (NSString *)testResultPath;
++ (void)testFile:(NSString *)testFileName;
++ (NSString *)testSoloFileName;
++ (NSString *)testAccompFileName;
++ (NSString *)testSourceFilePathForFile:(NSString *)testFileName;
 + (NSString *)tempFilePathForFile:(NSString *)fileName;
++ (NSString *)testResultPathForFile:(NSString *)fileName;
 + (void)deleteTempFilesForFile:(NSString *)fileName;
 
 @end
