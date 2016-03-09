@@ -27,57 +27,15 @@
 
 - (void)testStuff
 {
-    kBlockSize = 1024;
-    kSampleRate = 48000;
+    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
     
-    NSString *testFileName = [OfflineAudioFileProcessor testAccompFileName];
-    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:testFileName];
-    NSString *intermediateFilePath = [OfflineAudioFileProcessor tempFilePathForFile:testFileName];
-    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPathForFile:testFileName];
-    
-    AudioProcessingBlock compressorBlock = [OfflineAudioFileProcessor
-                                            compressionProcessingBlockWithSampleRate:kSampleRate
-                                            threshold:0.4
-                                            slope:0.5
-                                            lookaheadTime:5.0
-                                            windowTime:2.0
-                                            attackTime:0.1
-                                            releaseTime:300.0];
-    
-    AudioProcessingBlock freeverbBlock = [OfflineAudioFileProcessor
-                                          freeverbProcessingBlockWithSampleRate:kSampleRate
-                                          wetMix:0.4
-                                          dryMix:0.6
-                                          roomSize:0.33
-                                          width:0.83
-                                          damping:0.51];
-    
-    [OfflineAudioFileProcessor processFile:testFilePath
-                                 withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
-                                     
-                                     compressorBlock(buffer,bufferSize);
-                                     freeverbBlock(buffer,bufferSize);
-                                     
-                                     return noErr;
-                                 } maxBufferSize:kBlockSize
-                                resultPath:intermediateFilePath
-                                completion:^(NSString *resultPath, NSError *error) {
-                                    NSAssert(nil==error, @"ERROR: %@",error);
-                                    NSLog(@"Finished writing intermediate audio file to path: %@",resultPath);
-                                    
-                                    AudioProcessingBlock normalizerBlock = [OfflineAudioFileProcessor
-                                                                            normalizeProcessingBlockForAudioFile:resultPath
-                                                                            maximumMagnitude:0.99];
-                                    [OfflineAudioFileProcessor processFile:resultPath withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
-                                        return normalizerBlock(buffer,bufferSize);
-                                    } maxBufferSize:kBlockSize resultPath:resultFilePath completion:^(NSString *resultPath, NSError *error) {
-                                        NSAssert(nil==error, @"ERROR: %@",error);
-                                        NSLog(@"Finished writing final audio file to path: %@",resultPath);
-                                        [OfflineAudioFileProcessor deleteTempFilesForFile:testFileName];
-                                    }];
-                                    
-                                }];
-
+    [OfflineAudioFileProcessor doDefaultProcessingWithSourceFile:testFilePath onProgress:^(double progress) {
+        NSLog(@"Offline file processor made progress: %.3f",progress);
+    } onSuccess:^(NSURL *resultFile) {
+        NSLog(@"Offline file processor finished writing to path: %@",resultFile.path);
+    } onFailure:^(NSError *error) {
+        NSLog(@"Offline file processor failed with error: %@",error);
+    }];
 }
 
 - (void)didReceiveMemoryWarning {

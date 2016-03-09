@@ -27,6 +27,7 @@
 		F2E60A351C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */; };
 		F2E60A3A1C90BABF00A58227 /* faure_sicilienne_violin.48o.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */; };
 		F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
+		F2E60A3D1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = faure_sicilienne_violin.48k.wav; sourceTree = "<group>"; };
 		F2E4A2E31C8E537200E86A5F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Freeverb.m"; sourceTree = "<group>"; };
+		F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+ConvenienceMethods.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 			children = (
 				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
 				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */,
 				F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */,
 				F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */,
 				F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */,
@@ -278,6 +281,7 @@
 				F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */,
 				F212471F1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m in Sources */,
 				F21247291C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m in Sources */,
+				F2E60A3D1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m in Sources */,
 				F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */,
 				F212471C1C8F53C100C54911 /* AudioSpectrumProcessor.m in Sources */,
 				F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */,

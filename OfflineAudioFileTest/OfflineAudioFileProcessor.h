@@ -65,6 +65,15 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 @end
 
+@interface OfflineAudioFileProcessor (ConvenienceMethods)
+
++ (void)doDefaultProcessingWithSourceFile:(NSString *)sourceFilePath
+                               onProgress:(void(^)(double progress))progressBlock
+                                onSuccess:(void(^)(NSURL *resultFile))successBlock
+                                onFailure:(void(^)(NSError *error))failureBlock;
+
+@end
+
 @interface OfflineAudioFileProcessor (Test)
 
 + (void)testFile:(NSString *)testFileName;
