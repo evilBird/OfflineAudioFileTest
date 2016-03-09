@@ -24,6 +24,7 @@
 		F2E4A2E11C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */; };
 		F2E4A2E21C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
 		F2E4A2E41C8E537200E86A5F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E4A2E31C8E537200E86A5F /* Accelerate.framework */; };
+		F2E60A351C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = faure_sicilienne_violin.48o.wav; sourceTree = "<group>"; };
 		F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = faure_sicilienne_violin.48k.wav; sourceTree = "<group>"; };
 		F2E4A2E31C8E537200E86A5F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Freeverb.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */,
 				F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */,
 				F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */,
+				F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */,
 			);
 			name = OfflineAudioFileProcessor;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2E60A351C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m in Sources */,
 				F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */,
 				F212471F1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m in Sources */,
 				F21247291C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m in Sources */,

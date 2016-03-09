@@ -42,6 +42,22 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 @end
 
+@interface OfflineAudioFileProcessor (Freeverb)
+
++ (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
+
++ (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate
+                                                       wetMix:(Float32)wetMix
+                                                       dryMix:(Float32)dryMix
+                                                     roomSize:(Float32)roomsize
+                                                        width:(Float32)width
+                                                      damping:(Float32)damping;
+
++ (void)freeverbPrintParms;
++ (void)freebverbCleanup;
+
+@end
+
 @interface OfflineAudioFileProcessor (Test)
 
 + (void)test;
