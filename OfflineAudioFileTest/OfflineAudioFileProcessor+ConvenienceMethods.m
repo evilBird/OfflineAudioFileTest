@@ -49,7 +49,7 @@
                                             windowTime:2.0
                                             attackTime:0.1
                                             releaseTime:300.0];
-    
+    /*
     AudioProcessingBlock freeverbBlock = [OfflineAudioFileProcessor
                                           freeverbProcessingBlockWithSampleRate:kSampleRate
                                           wetMix:0.4
@@ -57,6 +57,9 @@
                                           roomSize:0.33
                                           width:0.83
                                           damping:0.51];
+    */
+    AudioProcessingBlock freeverbBlock = [OfflineAudioFileProcessor freeverbSmallRoomProcessingBlockWithSampleRate:kSampleRate];
+    
     UInt32 kFileLength = [OfflineAudioFileProcessor frameLengthForFile:sourceFilePath];
     UInt32 kFileNumBuffers = (UInt32)round(((double)kFileLength/(double)kBlockSize));
     UInt32 totalBuffersToProcess = (kFileNumBuffers * 2);

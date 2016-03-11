@@ -53,6 +53,8 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 + (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
 
++ (AudioProcessingBlock)freeverbSmallRoomProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
+
 + (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate
                                                        wetMix:(Float32)wetMix
                                                        dryMix:(Float32)dryMix

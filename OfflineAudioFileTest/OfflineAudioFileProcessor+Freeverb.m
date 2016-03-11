@@ -39,6 +39,12 @@
 #define freezemode		0.5
 #define	stereospread	23
 
+#define smallroom_size      0.2
+#define smallroom_damp      0.7
+#define smallroom_width     0.5
+#define smallroom_wet       0.3
+#define smallroom_dry       0.7
+
 /* these values assume 44.1KHz sample rate
  they will probably be OK for 48KHz sample rate
  but would need scaling for 96KHz (or other) sample rates.
@@ -666,6 +672,16 @@ static OfflineAudioFileProcessor *processor = nil;
                                                                    roomSize:initialroom
                                                                       width:initialwidth
                                                                     damping:initialdamp];
+}
+
++ (AudioProcessingBlock)freeverbSmallRoomProcessingBlockWithSampleRate:(NSUInteger)sampleRate
+{
+    return [OfflineAudioFileProcessor freeverbProcessingBlockWithSampleRate:sampleRate
+                                                                     wetMix:smallroom_wet
+                                                                     dryMix:smallroom_dry
+                                                                   roomSize:smallroom_size
+                                                                      width:smallroom_width
+                                                                    damping:smallroom_damp];
 }
 
 + (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate
