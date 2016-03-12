@@ -1,7 +1,7 @@
 {
   "name": "OfflineAudioFileProcessing",
-  "version": "0.0.1",
-  "summary": "AVFoundation-based utilities for offline audio file processing.",
+  "version": "0.0.2",
+  "summary": "AVFoundation & Objective C blocks-based utilities for offline audio file processing.",
   "homepage": "https://github.com/evilBird/OfflineAudioFileTest",
   "license": "MIT",
   "authors": [
@@ -9,7 +9,7 @@
   ],
   "source": {
     "git": "https://github.com/evilBird/OfflineAudioFileTest.git",
-    "tag": "0.0.1"
+    "tag": "0.0.2"
   },
   "platforms": {
     "ios": "8.0"
