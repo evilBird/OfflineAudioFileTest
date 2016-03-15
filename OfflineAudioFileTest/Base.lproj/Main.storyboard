@@ -16,8 +16,51 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress: 0.00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qlf-Hm-TGc">
+                                <rect key="frame" x="244.5" y="290" width="111.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="2xE-Fl-yJQ">
+                                <rect key="frame" x="173" y="318.5" width="254" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="MU6-JR-Vbg"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="crossFadeSliderAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gkc-R0-nBj"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g8W-P3-kNg">
+                                <rect key="frame" x="125" y="323.5" width="42" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File B" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1bF-hi-M8S">
+                                <rect key="frame" x="433" y="323.5" width="42" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="qlf-Hm-TGc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="2Dj-ll-JTl"/>
+                            <constraint firstItem="2xE-Fl-yJQ" firstAttribute="top" secondItem="qlf-Hm-TGc" secondAttribute="bottom" constant="8" symbolic="YES" id="4Fh-Z9-k3q"/>
+                            <constraint firstItem="qlf-Hm-TGc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="D2j-PI-jEq"/>
+                            <constraint firstItem="2xE-Fl-yJQ" firstAttribute="leading" secondItem="g8W-P3-kNg" secondAttribute="trailing" constant="8" symbolic="YES" id="OMt-fr-OoJ"/>
+                            <constraint firstItem="1bF-hi-M8S" firstAttribute="centerY" secondItem="2xE-Fl-yJQ" secondAttribute="centerY" id="Yge-jg-3EL"/>
+                            <constraint firstItem="1bF-hi-M8S" firstAttribute="leading" secondItem="2xE-Fl-yJQ" secondAttribute="trailing" constant="8" symbolic="YES" id="a7G-Cn-tL4"/>
+                            <constraint firstItem="g8W-P3-kNg" firstAttribute="centerY" secondItem="2xE-Fl-yJQ" secondAttribute="centerY" id="p16-GW-UAc"/>
+                            <constraint firstItem="2xE-Fl-yJQ" firstAttribute="centerX" secondItem="qlf-Hm-TGc" secondAttribute="centerX" id="s8h-Pc-fap"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="crossFadeSlider" destination="2xE-Fl-yJQ" id="2LZ-vN-Au1"/>
+                        <outlet property="progressLabel" destination="qlf-Hm-TGc" id="s4X-W4-l3I"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

@@ -41,24 +41,15 @@
     NSString *tempFilePath1 = [OfflineAudioFileProcessor tempFilePathForFile:sourceFileName];
     NSString *tempFilePath2 = [OfflineAudioFileProcessor tempFilePathForFile:sourceFileName];
     
-    AudioProcessingBlock compressorBlock = [OfflineAudioFileProcessor
-                                            compressionProcessingBlockWithSampleRate:kSampleRate
-                                            threshold:0.4
-                                            slope:0.5
-                                            lookaheadTime:5.0
-                                            windowTime:2.0
-                                            attackTime:0.1
-                                            releaseTime:300.0];
-    /*
+    AudioProcessingBlock compressorBlock = [OfflineAudioFileProcessor vcompressionProcessingBlockWithSampleRate:kSampleRate];
+    
     AudioProcessingBlock freeverbBlock = [OfflineAudioFileProcessor
                                           freeverbProcessingBlockWithSampleRate:kSampleRate
-                                          wetMix:0.4
-                                          dryMix:0.6
-                                          roomSize:0.33
+                                          wetMix:0.25
+                                          dryMix:0.75
+                                          roomSize:0.4
                                           width:0.83
                                           damping:0.51];
-    */
-    AudioProcessingBlock freeverbBlock = [OfflineAudioFileProcessor freeverbSmallRoomProcessingBlockWithSampleRate:kSampleRate];
     
     UInt32 kFileLength = [OfflineAudioFileProcessor frameLengthForFile:sourceFilePath];
     UInt32 kFileNumBuffers = (UInt32)round(((double)kFileLength/(double)kBlockSize));

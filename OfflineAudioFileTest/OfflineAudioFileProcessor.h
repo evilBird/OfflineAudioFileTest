@@ -31,6 +31,8 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 @interface OfflineAudioFileProcessor (Compressor)
 
++ (AudioProcessingBlock)vcompressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
+
 + (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
 
 + (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
