@@ -335,68 +335,23 @@ OSStatus compress
 - (AudioProcessingBlock)vectorCompressionProcessingBlock
 {
     NSUInteger sampleRate = (NSUInteger)self.sourceFormat.sampleRate;
-    return [OfflineAudioFileProcessor vcompressionProcessingBlockWithSampleRate:sampleRate];
-}
-
-+ (AudioProcessingBlock)vcompressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
-{
     AudioProcessingBlock compressionBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
         
         return vcompress(buffer,
-                        (UInt32)bufferSize,
-                        DEFAULT_THRESHOLD,
-                        DEFAULT_SLOPE,
-                        (UInt32)sampleRate,
-                        DEFAULT_LOOKAHEAD_MS,
-                        DEFAULT_WINDOW_MS,
-                        DEFAULT_ATTACK_MS,
-                        DEFAULT_RELEASE_MS);
+                         (UInt32)bufferSize,
+                         DEFAULT_THRESHOLD,
+                         DEFAULT_SLOPE,
+                         (UInt32)sampleRate,
+                         DEFAULT_LOOKAHEAD_MS,
+                         DEFAULT_WINDOW_MS,
+                         DEFAULT_ATTACK_MS,
+                         DEFAULT_RELEASE_MS);
     };
     
     return [compressionBlock copy];
 }
 
-+ (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
-{
-    AudioProcessingBlock compressionBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
-        
-        return compress(buffer,
-                        (UInt32)bufferSize,
-                        DEFAULT_THRESHOLD,
-                        DEFAULT_SLOPE,
-                        (UInt32)sampleRate,
-                        DEFAULT_LOOKAHEAD_MS,
-                        DEFAULT_WINDOW_MS,
-                        DEFAULT_ATTACK_MS,
-                        DEFAULT_RELEASE_MS);
-    };
-    
-    return [compressionBlock copy];
-}
 
-+ (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate
-                                                       threshold:(Float32)threshold
-                                                           slope:(Float32)slope
-                                                       lookaheadTime:(Float32)lookahead_ms
-                                                          windowTime:(Float32)window_ms
-                                                      attackTime:(Float32)attack_ms
-                                                     releaseTime:(Float32)release_ms
 
-{
-    AudioProcessingBlock compressionBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
-        
-        return compress(buffer,
-                        (UInt32)bufferSize,
-                        threshold,
-                        slope,
-                        (UInt32)sampleRate,
-                        lookahead_ms,
-                        window_ms,
-                        attack_ms,
-                        release_ms);
-    };
-    
-    return [compressionBlock copy];
-}
 
 @end
