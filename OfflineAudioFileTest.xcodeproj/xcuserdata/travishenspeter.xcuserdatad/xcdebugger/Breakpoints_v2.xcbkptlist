@@ -147,22 +147,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
-            timestampString = "479861268.122043"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
-            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor+Compressor.m"
             timestampString = "479857316.268154"
             startingColumnNumber = "9223372036854775807"
