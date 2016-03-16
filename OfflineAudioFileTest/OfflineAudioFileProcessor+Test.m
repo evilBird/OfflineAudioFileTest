@@ -66,23 +66,4 @@
 }
 
 
-+ (void)testFile:(NSString *)testFileName
-{
-    NSString *sourceFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:testFileName];
-    NSString *resultFilePath = [OfflineAudioFileProcessor testResultPathForFile:testFileName];
-    
-    [OfflineAudioFileProcessor processFile:sourceFilePath withBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
-        Float32 *samples = (Float32 *)(buffer->mBuffers[0].mData);
-        Float32 scale = 2.0;
-        vDSP_vsmul(samples, 1, &scale, samples, 1, bufferSize);
-        return noErr;
-    } maxBufferSize:1024 resultPath:resultFilePath completion:^(NSString *resultPath, NSError *error) {
-        if (!error) {
-            NSLog(@"finished writing audio file to path: %@",resultPath);
-        }else{
-            NSAssert(nil==error, @"ERROR WRITING FILE: %@",error);
-        }
-    }];
-}
-
 @end

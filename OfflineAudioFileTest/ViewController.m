@@ -20,8 +20,12 @@
 @property (nonatomic,strong)                        AVAudioPlayer                   *audioPlayerB;
 @property (strong, nonatomic)   IBOutlet            UILabel                         *progressLabel;
 @property (strong, nonatomic) IBOutlet              UISlider                        *crossFadeSlider;
+@property (strong, nonatomic) IBOutlet UIButton *pauseButton;
+@property (strong, nonatomic) IBOutlet UIButton *cancelButton;
 
 - (IBAction)crossFadeSliderAction:(id)sender;
+- (IBAction)pauseButtonAction:(id)sender;
+- (IBAction)cancelButtonAction:(id)sender;
 
 @end
 
@@ -30,63 +34,38 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.crossFadeSlider.enabled = NO;
-    [[NSOperationQueue new]addOperationWithBlock:^{
-        [self testCoolStuff];
-    }];
+    [self testOtherCoolStuff];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (void)testStuff
+- (void)testOtherCoolStuff
 {
     NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
-    __weak ViewController *weakself = self;
-    NSTimeInterval startTime = [[NSDate date]timeIntervalSince1970];
     
-    [OfflineAudioFileProcessor doDefaultProcessingWithSourceFile:testFilePath onProgress:^(double progress) {
+    self.myProcessor = [OfflineAudioFileProcessor doDefaultProcessingWithSourceFile:testFilePath onProgress:^(double progress) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = [NSString stringWithFormat:@"PROCESSING...%.2f",progress];
+            self.progressLabel.text = [NSString stringWithFormat:@"progress: %f",progress];
         });
     } onSuccess:^(NSURL *resultFile) {
-        NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
-
-        NSError *error = [weakself playAudioFileA:fileAURL andAudioFileB:resultFile];
-        NSTimeInterval endTime = [[NSDate date]timeIntervalSince1970];
-        NSTimeInterval processingTime = endTime-startTime;
-        NSLog(@"\nPROCESSING FINISHED IN %fs...Result path: %@",processingTime,resultFile.path);
-        if (error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakself.progressLabel.text = @"PLAYBACK ERROR";
-            });
-        }else{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakself.crossFadeSlider.enabled = YES;
-                weakself.progressLabel.text = @"PLAYING";
-            });
-        }
-    } onFailure:^(NSError *error) {
-        NSLog(@"Offline file processor failed with error: %@",error);
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = @"PROCESSING ERROR";
+            self.progressLabel.text = @"SUCCESS!";
+            NSLog(@"SUCCESS: %@",resultFile.path);
+        });
+    } onFailure:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.progressLabel.text = @"FAILURE";
+            NSLog(@"FAILURE: %@",error);
         });
     }];
 }
-
-static dispatch_queue_t processingQueue = nil;
 
 - (void)testCoolStuff
 {
     NSUInteger kBufferSize = 1024;
+
     __weak ViewController *weakself = self;
     NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
     NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = paths.firstObject;
-    NSString *destFilePath = [docsPath stringByAppendingPathComponent:[testFilePath lastPathComponent]];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:destFilePath]) {
-        [fm removeItemAtPath:destFilePath error:nil];
-    }
-    
     self.myProcessor = [OfflineAudioFileProcessor processFile:testFilePath
                                           withAudioBufferSize:kBufferSize
                                                      compress:YES
@@ -98,6 +77,8 @@ static dispatch_queue_t processingQueue = nil;
                                               } completionHandler:^(NSURL *fileURL, NSError *error) {
                                                   if (error) {
                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                          weakself.pauseButton.hidden = YES;
+                                                          weakself.cancelButton.hidden = YES;
                                                           weakself.progressLabel.text = @"PROCESSING ERROR";
                                                       });
                                                   }else{
@@ -109,6 +90,10 @@ static dispatch_queue_t processingQueue = nil;
                                                       });
                                                   }
                                               }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.pauseButton.hidden = NO;
+        self.cancelButton.hidden = NO;
+    });
     
     [self.myProcessor start];
     
@@ -129,6 +114,8 @@ static dispatch_queue_t processingQueue = nil;
                                                   } completionBlock:^(NSURL *fileURL, NSError *error) {
                                                       if (error) {
                                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                                              weakself.pauseButton.hidden = YES;
+                                                              weakself.cancelButton.hidden = YES;
                                                               weakself.progressLabel.text = @"POST-PROCESSING ERROR";
                                                           });
                                                       }else{
@@ -136,6 +123,8 @@ static dispatch_queue_t processingQueue = nil;
                                                           dispatch_async(dispatch_get_main_queue(), ^{
                                                               
                                                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                                  weakself.pauseButton.hidden = YES;
+                                                                  weakself.cancelButton.hidden = YES;
                                                                   [weakself playAudioFileA:origFile andAudioFileB:fileURL];
                                                                   weakself.crossFadeSlider.enabled = YES;
                                                               });
@@ -144,61 +133,6 @@ static dispatch_queue_t processingQueue = nil;
                                                       }
                                                   }];
     [self.myProcessor start];
-}
-
-- (void)testOtherStuff
-{
-    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
-    __weak ViewController *weakself = self;
-    NSUInteger maxBuffer = 1024;
-    NSUInteger sampleRate = [OfflineAudioFileProcessor sampleRateForFile:testFilePath];
-    
-    self.myProcessor = [[OfflineAudioFileProcessor alloc]initWithSourceFile:testFilePath maxBufferSize:maxBuffer];
-    
-    AudioProcessingBlock reverbBlock = [self.myProcessor mediumReverbProcessingBlock];
-    AudioProcessingBlock compressionBlock = [OfflineAudioFileProcessor vcompressionProcessingBlockWithSampleRate:sampleRate];
-    
-    [self.myProcessor setProcessingBlock:^OSStatus(AudioBufferList *buffer, AVAudioFrameCount bufferSize) {
-        reverbBlock(buffer,bufferSize);
-        compressionBlock(buffer,bufferSize);
-        return noErr;
-    }];
-    
-    [self.myProcessor setProgressBlock:^(double progress) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = [NSString stringWithFormat:@"PROCESSING...%.2f",progress];
-        });
-    }];
-    
-    [self.myProcessor setCompletionBlock:^(NSURL *resultFile, NSError *error) {
-        if (error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakself.progressLabel.text = @"PROCESSING ERROR";
-            });
-        }else{
-            NSLog(@"\nResult path: %@",resultFile.path);
-            NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
-            NSError *pe = [weakself playAudioFileA:fileAURL andAudioFileB:resultFile];
-            if (pe) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    weakself.progressLabel.text = @"PLAYBACK ERROR";
-                });
-            }else{
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    weakself.crossFadeSlider.enabled = YES;
-                    weakself.progressLabel.text = @"PLAYING";
-                });
-            }
-        }
-    }];
-    
-    [self.myProcessor start];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.myProcessor pause];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.myProcessor resume];
-        });
-    });
 }
 
 - (NSError *)playAudioFileA:(NSURL *)fileAURL andAudioFileB:(NSURL *)fileBURL
@@ -248,6 +182,22 @@ static dispatch_queue_t processingQueue = nil;
     double fileBVolume = scaledCosValue;
     self.audioPlayerA.volume = fileAVolume;
     self.audioPlayerB.volume = fileBVolume;
+}
+
+- (IBAction)pauseButtonAction:(id)sender {
+    
+    if (self.myProcessor.isRunning) {
+        self.pauseButton.selected = YES;
+        [self.myProcessor pause];
+    }else if (self.myProcessor.isPaused){
+        self.pauseButton.selected = NO;
+        [self.myProcessor resume];
+
+    }
+}
+
+- (IBAction)cancelButtonAction:(id)sender {
+    [self.myProcessor cancel];
 }
 
 - (void)didReceiveMemoryWarning {

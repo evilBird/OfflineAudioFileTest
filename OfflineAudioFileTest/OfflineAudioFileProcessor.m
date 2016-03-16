@@ -47,34 +47,6 @@
 
 @implementation OfflineAudioFileProcessor
 
-Float32 GetMaxSampleValueInBuffer(AudioBufferList *bufferList, UInt32 bufferSize)
-{
-    Float32 *tempBuffer = (Float32 *)(malloc(sizeof(Float32)*bufferSize));
-    UInt32 numChannels = (UInt32)(bufferList->mNumberBuffers);
-    Float32 maxVal = 0;
-    Float32 myMaxVal = 0;
-    for (UInt32 i = 0; i < numChannels; i ++ ) {
-        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
-        vDSP_vabs(samples, 1, tempBuffer, 1, bufferSize);
-        vDSP_vsort(tempBuffer, bufferSize, -1);
-        maxVal = tempBuffer[0];
-        myMaxVal = ( maxVal >= myMaxVal ) ? ( maxVal ) : ( myMaxVal );
-    }
-    
-    free(tempBuffer);
-    return myMaxVal;
-}
-
-OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Float32 constant)
-{
-    UInt32 numChannels = (UInt32)(bufferList->mNumberBuffers);
-    for (UInt32 i = 0; i < numChannels; i ++) {
-        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
-        vDSP_vsmul(samples, 1, &constant, samples, 1, bufferSize);
-    }
-    return noErr;
-}
-
 + (instancetype)normalizeFile:(NSString *)sourceFilePath
           withAudioBufferSize:(NSUInteger)maxBufferSize
             normalizeConstant:(Float32)normConstant
@@ -85,20 +57,8 @@ OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Flo
     [processor setProgressBlock:progressHandler];
     [processor setCompletionBlock:completionHandler];
     AudioProcessingBlock normalizeBlock = [processor normalizeProcessingBlockWithConstant:normConstant];
+    processor.doNormalize = YES;
     [processor setProcessingBlock:normalizeBlock];
-    return processor;
-}
-
-+ (instancetype)processorWithSource:(NSString *)sourceFilePath
-                          maxBuffer:(NSUInteger)maxBufferSize
-                    processingBlock:(AudioProcessingBlock)processingBlock
-                      progressBlock:(AudioProcessingProgressBlock)progressBlock
-                    completionBlock:(AudioProcessingCompletionBlock)completionBlock
-{
-    OfflineAudioFileProcessor *processor = [[OfflineAudioFileProcessor alloc]initWithSourceFile:sourceFilePath maxBufferSize:maxBufferSize];
-    [processor setProcessingBlock:processingBlock];
-    [processor setProgressBlock:progressBlock];
-    [processor setCompletionBlock:completionBlock];
     return processor;
 }
 
@@ -430,10 +390,13 @@ OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Flo
     }
     
     NSError *err = nil;
-    
     Float32 maxRMSVal = self.measuredPeakOutputRMS;
     
-    [self readFromFile:self.sourceAudioFile processWithBlock:self.myProcessingBlock andWriteToFile:self.tempResultAudioFile progressBlock:self.myProgressBlock maxRMS:&maxRMSVal error:&err];
+    if (!self.doNormalize) {
+        [self readFromFile:self.sourceAudioFile processWithBlock:self.myProcessingBlock andWriteToFile:self.tempResultAudioFile progressBlock:self.myProgressBlock maxRMS:&maxRMSVal error:&err];
+    }else{
+        [self readFromFile:self.sourceAudioFile processWithBlock:self.myProcessingBlock andWriteToFile:self.tempResultAudioFile progressBlock:self.myProgressBlock maxRMS:NULL error:&err];
+    }
     
     if (err) {
         return [self finishWithError:err];
@@ -449,11 +412,13 @@ OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Flo
         return;
     }
     
-    self.channelNormalizedMaxRMS = 0.99/(Float32)(self.sourceFormat.channelCount);
-    
-    NSLog(@"MAX RMS: %f",self.measuredPeakOutputRMS);
-    self.normalizeConstant = self.channelNormalizedMaxRMS/self.measuredPeakOutputRMS;
-    NSLog(@"Normalize constant: %f",self.normalizeConstant);
+    if (!self.doNormalize) {
+        self.channelNormalizedMaxRMS = 0.95/(Float32)(self.sourceFormat.channelCount);
+        NSLog(@"MAX RMS: %f",self.measuredPeakOutputRMS);
+        self.normalizeConstant = self.channelNormalizedMaxRMS/self.measuredPeakOutputRMS;
+        NSLog(@"Normalize constant: %f",self.normalizeConstant);
+    }
+
     self.resultAudioFile = [[AVAudioFile alloc]initForReading:self.tempResultAudioFile.url error:&err];
     
     if (err) {

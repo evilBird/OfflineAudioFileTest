@@ -18,13 +18,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress: 0.00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qlf-Hm-TGc">
-                                <rect key="frame" x="244.5" y="290" width="111.5" height="20.5"/>
+                                <rect key="frame" x="244" y="290" width="111.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="2xE-Fl-yJQ">
-                                <rect key="frame" x="173" y="318.5" width="254" height="31"/>
+                                <rect key="frame" x="173" y="318" width="254" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="MU6-JR-Vbg"/>
                                 </constraints>
@@ -33,32 +33,53 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g8W-P3-kNg">
-                                <rect key="frame" x="125" y="323.5" width="42" height="20.5"/>
+                                <rect key="frame" x="125" y="323" width="42" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File B" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1bF-hi-M8S">
-                                <rect key="frame" x="433" y="323.5" width="42" height="20.5"/>
+                                <rect key="frame" x="433" y="323" width="42" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yca-Jq-PPY">
+                                <rect key="frame" x="175" y="356" width="42" height="30"/>
+                                <state key="normal" title="Pause"/>
+                                <state key="selected" title="Resume"/>
+                                <connections>
+                                    <action selector="pauseButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OG9-8z-yB6"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nzZ-n1-yYK">
+                                <rect key="frame" x="377" y="356" width="48" height="30"/>
+                                <state key="normal" title="Cancel"/>
+                                <connections>
+                                    <action selector="cancelButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7yp-K8-Zfs"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="qlf-Hm-TGc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="2Dj-ll-JTl"/>
                             <constraint firstItem="2xE-Fl-yJQ" firstAttribute="top" secondItem="qlf-Hm-TGc" secondAttribute="bottom" constant="8" symbolic="YES" id="4Fh-Z9-k3q"/>
                             <constraint firstItem="qlf-Hm-TGc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="D2j-PI-jEq"/>
+                            <constraint firstItem="nzZ-n1-yYK" firstAttribute="trailing" secondItem="2xE-Fl-yJQ" secondAttribute="trailing" id="Hrh-10-SSw"/>
                             <constraint firstItem="2xE-Fl-yJQ" firstAttribute="leading" secondItem="g8W-P3-kNg" secondAttribute="trailing" constant="8" symbolic="YES" id="OMt-fr-OoJ"/>
                             <constraint firstItem="1bF-hi-M8S" firstAttribute="centerY" secondItem="2xE-Fl-yJQ" secondAttribute="centerY" id="Yge-jg-3EL"/>
                             <constraint firstItem="1bF-hi-M8S" firstAttribute="leading" secondItem="2xE-Fl-yJQ" secondAttribute="trailing" constant="8" symbolic="YES" id="a7G-Cn-tL4"/>
+                            <constraint firstItem="nzZ-n1-yYK" firstAttribute="top" secondItem="2xE-Fl-yJQ" secondAttribute="bottom" constant="8" symbolic="YES" id="cGT-EX-1jU"/>
+                            <constraint firstItem="yca-Jq-PPY" firstAttribute="leading" secondItem="2xE-Fl-yJQ" secondAttribute="leading" id="hKN-qy-CFF"/>
                             <constraint firstItem="g8W-P3-kNg" firstAttribute="centerY" secondItem="2xE-Fl-yJQ" secondAttribute="centerY" id="p16-GW-UAc"/>
                             <constraint firstItem="2xE-Fl-yJQ" firstAttribute="centerX" secondItem="qlf-Hm-TGc" secondAttribute="centerX" id="s8h-Pc-fap"/>
+                            <constraint firstItem="yca-Jq-PPY" firstAttribute="top" secondItem="2xE-Fl-yJQ" secondAttribute="bottom" constant="8" symbolic="YES" id="sbN-67-eNo"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cancelButton" destination="nzZ-n1-yYK" id="IXb-Q0-J7Q"/>
                         <outlet property="crossFadeSlider" destination="2xE-Fl-yJQ" id="2LZ-vN-Au1"/>
+                        <outlet property="pauseButton" destination="yca-Jq-PPY" id="Rh3-OP-mvU"/>
                         <outlet property="progressLabel" destination="qlf-Hm-TGc" id="s4X-W4-l3I"/>
                     </connections>
                 </viewController>
