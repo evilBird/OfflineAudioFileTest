@@ -31,11 +31,80 @@ void print_samples(Float32 *samples, UInt32 numSamples, const char *tag){
     printf("\n");
 }
 
-Float32* GetFloatBuffer(UInt32 bufferLength)
+Float32* GenerateFloatRamp(UInt32 bufferLength, Float32 startValue, Float32 endValue)
 {
     Float32 *tempBuffer = (Float32 *)malloc(sizeof(Float32)*bufferLength);
-    memset(tempBuffer, 0, sizeof(Float32)*bufferLength);
+    vDSP_vgen(&startValue, &endValue, tempBuffer, 1, bufferLength);
     return tempBuffer;
+}
+
+Float32* GenerateFloatBuffer(UInt32 bufferLength, Float32 initalValue)
+{
+    return GenerateFloatRamp(bufferLength, initalValue, initalValue);
+}
+
+void FillFloatBuffer(Float32 *floatBuffer, Float32 fillValue, UInt32 bufferSize)
+{
+    vDSP_vgen(&fillValue, &fillValue, floatBuffer, 1, bufferSize);
+}
+
+void ClearFloatBuffer(Float32 *floatBuffer, UInt32 bufferSize)
+{
+    FillFloatBuffer(floatBuffer, 0.0, bufferSize);
+}
+
+Float32* GetFloatBuffer(UInt32 bufferLength)
+{
+    return GenerateFloatBuffer(bufferLength, 0.0);
+}
+
+Float32* GetRMSVector(AudioBufferList *bufferList,
+                      UInt32 sampleRate,
+                      UInt32 bufferSize,
+                      UInt32 windowSize)
+{
+    UInt32 numChannels = bufferList->mNumberBuffers;
+    Float32 normalizeScalar = 1.0/((Float32)numChannels);
+    Float32 *rmsBuffer = GetFloatBuffer(bufferSize);
+    Float32 *tempBuffer1 = GetFloatBuffer(bufferSize);
+    Float32 *tempBuffer2 = GetFloatBuffer(bufferSize);
+    
+    for (UInt32 i = 0; i < numChannels; i++) {
+        
+        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
+        vDSP_vsmul(samples, 1, &normalizeScalar, tempBuffer1, 1, bufferSize);
+        vDSP_vsq(tempBuffer1, 1, tempBuffer2, 1, bufferSize);
+        ClearFloatBuffer(tempBuffer1, bufferSize);
+        vDSP_vswsum(tempBuffer2, 1, tempBuffer1, 1, bufferSize-windowSize, windowSize);
+        ClearFloatBuffer(tempBuffer2, bufferSize);
+        Float32 den = (Float32)windowSize;
+        vDSP_vsdiv(tempBuffer1, 1, &den, tempBuffer2, 1, bufferSize);
+        ClearFloatBuffer(tempBuffer1, bufferSize);
+        int n = (int)bufferSize;
+        vvsqrtf(tempBuffer1,tempBuffer2,&n);
+        ClearFloatBuffer(tempBuffer2, bufferSize);
+        vDSP_vadd(rmsBuffer, 1, tempBuffer1, 1, rmsBuffer, 1, bufferSize);
+        ClearFloatBuffer(tempBuffer1, bufferSize);
+    }
+    
+    
+    free(tempBuffer1);
+    free(tempBuffer2);
+    
+    return rmsBuffer;
+}
+
+Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize, UInt32 windowSize)
+{
+    Float32 *rmsVector = NULL;
+    rmsVector = GetRMSVector(buffer, sampleRate, bufferSize, windowSize);
+    if (NULL == rmsVector) {
+        return 0.0;
+    }
+    Float32 peakRMS;
+    vDSP_maxv(rmsVector, 1, &peakRMS, bufferSize);
+    free(rmsVector);
+    return peakRMS;
 }
 
 static UInt32 sampleCt = 0;

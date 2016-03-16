@@ -15,35 +15,47 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 typedef void (^AudioProcessingProgressBlock)(double progress);
 typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error);
 
+Float32 GetMaxSampleValueInBuffer(AudioBufferList *bufferList, UInt32 bufferSize);
+OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Float32 constant);
+
 @interface OfflineAudioFileProcessor : NSObject
 
-@property (nonatomic,strong,readonly)               NSString                *sourceFilePath;
-@property (nonatomic,strong,readonly)               NSString                *resultFilePath;
+@property (nonatomic,strong,readonly)                   NSString                *sourceFilePath;
+@property (nonatomic,strong,readonly)                   NSString                *resultFilePath;
 
-@property (nonatomic,readonly)                      NSUInteger              maxBufferSize;
-@property (nonatomic,readonly)                      NSUInteger              sourceSampleRate;
-@property (nonatomic,readonly)                      AVAudioFrameCount       sourceLength;
-@property (nonatomic,readonly)                      AVAudioFramePosition    sourcePosition;
-@property (nonatomic,readonly)                      AVAudioFormat           *sourceFormat;
-@property (nonatomic,readonly)                      Float32                 maxSampleValue;
-@property (nonatomic,readonly)                      bool                    normalize;
+@property (nonatomic,readonly)                          NSUInteger              maxBufferSize;
+@property (nonatomic,readonly)                          NSUInteger              sourceSampleRate;
+@property (nonatomic,readonly)                          Float32                 measuredPeakOutputRMS;
+@property (nonatomic,readonly)                          Float32                 channelNormalizedMaxRMS;
+@property (nonatomic,readonly)                          Float32                 normalizeConstant;
 
-@property (nonatomic,readonly)                      double                  progress;
-@property (nonatomic,readonly,getter=isReady)       bool                    ready;
-@property (nonatomic,readonly,getter=isRunning)     bool                    running;
-@property (nonatomic,readonly,getter=isPaused)      bool                    paused;
-@property (nonatomic,readonly,getter=isDone)        bool                    done;
-@property (nonatomic,readonly,getter=isCancelled)   bool                    cancelled;
+@property (nonatomic,readonly)                          AVAudioFrameCount       sourceLength;
+@property (nonatomic,readonly)                          AVAudioFramePosition    sourcePosition;
+@property (nonatomic,readonly)                          AVAudioFormat           *sourceFormat;
 
-@property (nonatomic,strong,readonly)               NSError                 *error;
-@property (nonatomic)                               bool                    freeverbNeedsCleanup;
+@property (nonatomic,getter=doesNormalize)              bool                    doNormalize;
+@property (nonatomic,getter=doesReverb)                 bool                    doReverb;
+@property (nonatomic,getter=doesCompression)            bool                    doCompression;
+
+@property (nonatomic,readonly)                          double                  progress;
+@property (nonatomic,readonly,getter=isReady)           bool                    ready;
+@property (nonatomic,readonly,getter=isRunning)         bool                    running;
+@property (nonatomic,readonly,getter=isPaused)          bool                    paused;
+@property (nonatomic,readonly,getter=isDone)            bool                    done;
+@property (nonatomic,readonly,getter=isCancelled)       bool                    cancelled;
+
+@property (nonatomic,strong,readonly)                   NSError                 *error;
+
++ (instancetype)normalizeFile:(NSString *)sourceFilePath
+          withAudioBufferSize:(NSUInteger)maxBufferSize
+            normalizeConstant:(Float32)normConstant
+                progressBlock:(void(^)(double progress))progressHandler
+              completionBlock:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
 
 + (instancetype)processFile:(NSString *)sourceFilePath
         withAudioBufferSize:(NSUInteger)maxBufferSize
-                    onQueue:(dispatch_queue_t)processingQueue
                    compress:(BOOL)compress
                      reverb:(BOOL)reverb
-                  normalize:(BOOL)normalize
             progressHandler:(void(^)(double progress))progressHandler
           completionHandler:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
 
@@ -69,6 +81,11 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 
 @interface OfflineAudioFileProcessor (Compressor)
 
+void print_samples(Float32 *samples, UInt32 numSamples, const char *tag);
+Float32* GenerateFloatRamp(UInt32 bufferLength, Float32 startValue, Float32 endValue);
+Float32* GenerateFloatBuffer(UInt32 bufferLength, Float32 initalValue);
+Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize, UInt32 windowSize);
+
 - (AudioProcessingBlock)vectorCompressionProcessingBlock;
 
 + (AudioProcessingBlock)vcompressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
@@ -87,7 +104,11 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 
 @interface OfflineAudioFileProcessor (Normalizer)
 
+OSStatus NormalizeAudioBuffer(AudioBufferList *bufferList, Float32 peakMagnitude, Float32 maxMagnitude, UInt32 bufferSize);
+
 + (Float32)getPeakMagnitudeForAudioFile:(NSURL *)audioFileURL;
+
+- (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant;
 
 + (AudioProcessingBlock)normalizeProcessingBlockForAudioFile:(NSString *)audioFilePath maximumMagnitude:(Float32)maximumMagnitude;
 

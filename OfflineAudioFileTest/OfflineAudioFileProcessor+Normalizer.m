@@ -50,6 +50,49 @@ OSStatus NormalizeAudioBuffer(AudioBufferList *bufferList, Float32 peakMagnitude
     return myPeakMag;
 }
 
+- (Float32)peakMagnitudeForAudioFile:(AVAudioFile *)audioFile error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(audioFile);
+    AVAudioFrameCount length = (AVAudioFrameCount)audioFile.length;
+    NSParameterAssert(length>0);
+    AVAudioFormat *format = audioFile.processingFormat;
+    AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:format frameCapacity:length];
+    NSError *err = nil;
+    [audioFile readIntoBuffer:buffer error:&err];
+    
+    if (err) {
+        if (error) {
+            *error = err;
+        }
+        
+        return 0.0;
+    }
+    
+    AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
+    UInt32 bufferSize = (UInt32)(length);
+    UInt32 sampleRate = (UInt32)(format.sampleRate);
+    UInt32 windowSize = 512;
+    Float32 result = GetPeakRMS(bufferList, sampleRate, bufferSize, windowSize);
+    return result;
+}
+
+
+- (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant
+{
+
+    AudioProcessingBlock normalizeBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
+        UInt32 numChannels = bufferList->mNumberBuffers;
+        
+        for (UInt32 i = 0; i < numChannels; i++) {
+            Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
+            vDSP_vsmul(samples, 1, &normConstant, samples, 1, bufferSize);
+        }
+        
+        return noErr;
+    };
+    
+    return [normalizeBlock copy];
+}
 
 + (AudioProcessingBlock)normalizeProcessingBlockForAudioFile:(NSString *)audioFilePath maximumMagnitude:(Float32)maximumMagnitude
 {

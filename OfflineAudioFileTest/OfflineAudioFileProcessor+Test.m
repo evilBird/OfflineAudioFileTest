@@ -41,6 +41,7 @@
     return tempFilePath;
 }
 
+
 + (NSString *)testResultPathForFile:(NSString *)fileName
 {
     NSString *tempFolderPath = NSTemporaryDirectory();

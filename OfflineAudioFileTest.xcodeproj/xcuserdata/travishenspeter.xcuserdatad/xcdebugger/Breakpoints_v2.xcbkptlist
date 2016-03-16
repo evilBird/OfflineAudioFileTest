@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/ViewController.m"
-            timestampString = "479795776.014354"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
             landmarkName = "-playAudioFileA:andAudioFileB:"
             landmarkType = "5">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/ViewController.m"
-            timestampString = "479795776.014354"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "-playAudioFileA:andAudioFileB:"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/ViewController.m"
-            timestampString = "479795776.014354"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "-playAudioFileA:andAudioFileB:"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/ViewController.m"
-            timestampString = "479795776.014354"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
             landmarkName = "-playAudioFileA:andAudioFileB:"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/ViewController.m"
-            timestampString = "479795776.014354"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "-playAudioFileA:andAudioFileB:"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,28 +90,165 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor+Compressor.m"
-            timestampString = "479770063.467418"
+            timestampString = "479857568.046509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "240"
+            endingLineNumber = "240"
             landmarkName = "vcompress()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
-            timestampString = "479795828.68829"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/ViewController.m"
+            timestampString = "479857320.501731"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "323"
-            endingLineNumber = "323"
-            landmarkName = "-doProcessing"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "-normalizeFile:originalFile:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/ViewController.m"
+            timestampString = "479856877.628505"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "-normalizeFile:originalFile:"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__45-[ViewController normalizeFile:originalFile:]_block_invoke_2"
+                  moduleName = "OfflineAudioFileTest"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/travishenspeter/OfflineAudioFileTest/OfflineAudioFileTest/ViewController.m"
+                  timestampString = "479858154.539717"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "186">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__copy_helper_block_129"
+                  moduleName = "OfflineAudioFileTest"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/travishenspeter/OfflineAudioFileTest/OfflineAudioFileTest/ViewController.m"
+                  timestampString = "479858154.539858"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__destroy_helper_block_130"
+                  moduleName = "OfflineAudioFileTest"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/travishenspeter/OfflineAudioFileTest/OfflineAudioFileTest/ViewController.m"
+                  timestampString = "479858154.539985"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/ViewController.m"
+            timestampString = "479856877.628505"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
+            landmarkName = "-normalizeFile:originalFile:"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__45-[ViewController normalizeFile:originalFile:]_block_invoke135"
+                  moduleName = "OfflineAudioFileTest"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/travishenspeter/OfflineAudioFileTest/OfflineAudioFileTest/ViewController.m"
+                  timestampString = "479858154.54112"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__45-[ViewController normalizeFile:originalFile:]_block_invoke_2136"
+                  moduleName = "OfflineAudioFileTest"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/travishenspeter/OfflineAudioFileTest/OfflineAudioFileTest/ViewController.m"
+                  timestampString = "479858154.541269"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "132"
+                  endingLineNumber = "132"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/ViewController.m"
+            timestampString = "479856877.628505"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "-normalizeFile:originalFile:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -122,12 +259,140 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
-            timestampString = "479795828.68829"
+            timestampString = "479858153.518306"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "-doProcessing"
+            startingLineNumber = "435"
+            endingLineNumber = "435"
+            landmarkName = "-doMainProcessing"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
+            timestampString = "479858153.518306"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
+            timestampString = "479858153.518306"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "416"
+            endingLineNumber = "416"
+            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
+            timestampString = "479858153.518306"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "413"
+            endingLineNumber = "413"
+            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor+Compressor.m"
+            timestampString = "479857316.268154"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "GetRMSVector()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor+Compressor.m"
+            timestampString = "479857346.820199"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "GetRMSVector()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor+Compressor.m"
+            timestampString = "479857430.737736"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "GetRMSVector()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
+            timestampString = "479858116.184323"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OfflineAudioFileTest/OfflineAudioFileProcessor.m"
+            timestampString = "479858149.984533"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "405"
+            endingLineNumber = "405"
+            landmarkName = "-readFromFile:processWithBlock:andWriteToFile:progressBlock:maxRMS:error:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -686,14 +686,12 @@ static OfflineAudioFileProcessor *processor = nil;
 
 - (AudioProcessingBlock)mediumReverbProcessingBlock
 {
-    
     freeverb_setup(self, (UInt32)self.sourceSampleRate);
     freeverb_setwet(self, 0.25);
     freeverb_setdry(self, 0.75);
     freeverb_setroomsize(self, 0.4);
     freeverb_setwidth(self, 0.7);
     freeverb_setdamp(self, 0.6);
-    self.freeverbNeedsCleanup = YES;
     __weak OfflineAudioFileProcessor *weakself = self;
     AudioProcessingBlock freeverbBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
         return dsp_do_freeverb(weakself, buffer, bufferSize);

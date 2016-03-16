@@ -30,7 +30,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.crossFadeSlider.enabled = NO;
-    [self testCoolStuff];
+    [[NSOperationQueue new]addOperationWithBlock:^{
+        [self testCoolStuff];
+    }];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -46,6 +48,7 @@
         });
     } onSuccess:^(NSURL *resultFile) {
         NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
+
         NSError *error = [weakself playAudioFileA:fileAURL andAudioFileB:resultFile];
         NSTimeInterval endTime = [[NSDate date]timeIntervalSince1970];
         NSTimeInterval processingTime = endTime-startTime;
@@ -72,20 +75,22 @@ static dispatch_queue_t processingQueue = nil;
 
 - (void)testCoolStuff
 {
-    if (!processingQueue) {
-        processingQueue = dispatch_queue_create("com.offlineAudioFileProcessor.processingQueue", DISPATCH_QUEUE_SERIAL);
-    }
-    
     NSUInteger kBufferSize = 1024;
     __weak ViewController *weakself = self;
     NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
+    NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docsPath = paths.firstObject;
+    NSString *destFilePath = [docsPath stringByAppendingPathComponent:[testFilePath lastPathComponent]];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:destFilePath]) {
+        [fm removeItemAtPath:destFilePath error:nil];
+    }
     
     self.myProcessor = [OfflineAudioFileProcessor processFile:testFilePath
                                           withAudioBufferSize:kBufferSize
-                                                      onQueue:processingQueue
                                                      compress:YES
                                                        reverb:YES
-                                                    normalize:YES
                                               progressHandler:^(double progress) {
                                                   dispatch_async(dispatch_get_main_queue(), ^{
                                                       weakself.progressLabel.text = [NSString stringWithFormat:@"PROCESSING...%.2f",progress];
@@ -96,23 +101,49 @@ static dispatch_queue_t processingQueue = nil;
                                                           weakself.progressLabel.text = @"PROCESSING ERROR";
                                                       });
                                                   }else{
-                                                      NSLog(@"\nResult path: %@",fileURL.path);
-                                                      NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
-                                                      NSError *pe = [weakself playAudioFileA:fileAURL andAudioFileB:fileURL];
-                                                      if (pe) {
-                                                          dispatch_async(dispatch_get_main_queue(), ^{
-                                                              weakself.progressLabel.text = @"PLAYBACK ERROR";
-                                                          });
-                                                      }else{
-                                                          dispatch_async(dispatch_get_main_queue(), ^{
-                                                              weakself.crossFadeSlider.enabled = YES;
-                                                              weakself.progressLabel.text = @"PLAYING";
-                                                          });
-                                                      }
+                                                      NSLog(@"finished main processing to path: %@",fileURL.path);
+                                                      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                          [[NSOperationQueue new]addOperationWithBlock:^{
+                                                              [weakself normalizeFile:fileURL originalFile:fileAURL];
+                                                          }];
+                                                      });
                                                   }
                                               }];
     
+    [self.myProcessor start];
     
+}
+
+- (void)normalizeFile:(NSURL *)toNormalize originalFile:(NSURL *)origFile
+{
+    Float32 normConstant = self.myProcessor.normalizeConstant;
+    self.myProcessor = nil;
+    __weak ViewController *weakself = self;
+    self.myProcessor = [OfflineAudioFileProcessor normalizeFile:toNormalize.path
+                                            withAudioBufferSize:1024
+                                              normalizeConstant:normConstant
+                                                  progressBlock:^(double progress) {
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          weakself.progressLabel.text = [NSString stringWithFormat:@"POST-PROCESSING...%.2f",progress];
+                                                      });
+                                                  } completionBlock:^(NSURL *fileURL, NSError *error) {
+                                                      if (error) {
+                                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                                              weakself.progressLabel.text = @"POST-PROCESSING ERROR";
+                                                          });
+                                                      }else{
+                                                          NSLog(@"finished post-processing to path: %@",fileURL.path);
+                                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                                              
+                                                              dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                                  [weakself playAudioFileA:origFile andAudioFileB:fileURL];
+                                                                  weakself.crossFadeSlider.enabled = YES;
+                                                              });
+                                                              
+                                                          });
+                                                      }
+                                                  }];
+    [self.myProcessor start];
 }
 
 - (void)testOtherStuff
