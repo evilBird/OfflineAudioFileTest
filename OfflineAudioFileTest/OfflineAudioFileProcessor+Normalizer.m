@@ -12,15 +12,14 @@
 
 - (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant
 {
-
     AudioProcessingBlock normalizeBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
+        OSStatus err = noErr;
         UInt32 numChannels = bufferList->mNumberBuffers;
         for (UInt32 i = 0; i < numChannels; i++) {
             Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
             vDSP_vsmul(samples, 1, &normConstant, samples, 1, bufferSize);
         }
-        
-        return noErr;
+        return err;
     };
     
     return [normalizeBlock copy];

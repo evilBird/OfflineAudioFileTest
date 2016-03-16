@@ -123,9 +123,7 @@ OSStatus vcompress
 )
 {
     
-    Float32 sampleTime = (Float32)sampleCt/(Float32)sampleRate;
     Float32 preGain = 1.0;
-    //printf("\nSAMPLE TIME IS %f\n",sampleTime);
     
     threshold *= 0.01;          // threshold to unity (0...1)
     slope *= 0.01;              // slope to unity
@@ -234,9 +232,7 @@ OSStatus vcompress
     }
     
     
-    sampleCt+=n;
     
-    //printf("\nSAMPLE TIME WAS %f\n",sampleTime);
     
     return noErr;
 }
@@ -337,15 +333,16 @@ OSStatus compress
     NSUInteger sampleRate = (NSUInteger)self.sourceFormat.sampleRate;
     AudioProcessingBlock compressionBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
         
-        return vcompress(buffer,
-                         (UInt32)bufferSize,
-                         DEFAULT_THRESHOLD,
-                         DEFAULT_SLOPE,
-                         (UInt32)sampleRate,
-                         DEFAULT_LOOKAHEAD_MS,
-                         DEFAULT_WINDOW_MS,
-                         DEFAULT_ATTACK_MS,
-                         DEFAULT_RELEASE_MS);
+        OSStatus err =  vcompress(buffer,
+                                  (UInt32)bufferSize,
+                                  DEFAULT_THRESHOLD,
+                                  DEFAULT_SLOPE,
+                                  (UInt32)sampleRate,
+                                  DEFAULT_LOOKAHEAD_MS,
+                                  DEFAULT_WINDOW_MS,
+                                  DEFAULT_ATTACK_MS,
+                                  DEFAULT_RELEASE_MS);
+        return err;
     };
     
     return [compressionBlock copy];
