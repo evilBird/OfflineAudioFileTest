@@ -55,7 +55,7 @@ OSStatus vcompress
 {
     
     Float32 sampleTime = (Float32)sampleCt/(Float32)sampleRate;
-    Float32 preGain = 5.0;
+    Float32 preGain = 1.0;
     //printf("\nSAMPLE TIME IS %f\n",sampleTime);
     
     threshold *= 0.01;          // threshold to unity (0...1)
@@ -261,6 +261,12 @@ OSStatus compress
     }
     
     return noErr;
+}
+
+- (AudioProcessingBlock)vectorCompressionProcessingBlock
+{
+    NSUInteger sampleRate = (NSUInteger)self.sourceFormat.sampleRate;
+    return [OfflineAudioFileProcessor vcompressionProcessingBlockWithSampleRate:sampleRate];
 }
 
 + (AudioProcessingBlock)vcompressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate

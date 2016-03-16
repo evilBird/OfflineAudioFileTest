@@ -25,8 +25,11 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 @property (nonatomic,readonly)                      AVAudioFrameCount       sourceLength;
 @property (nonatomic,readonly)                      AVAudioFramePosition    sourcePosition;
 @property (nonatomic,readonly)                      AVAudioFormat           *sourceFormat;
+@property (nonatomic,readonly)                      Float32                 maxSampleValue;
+@property (nonatomic,readonly)                      bool                    normalize;
 
 @property (nonatomic,readonly)                      double                  progress;
+@property (nonatomic,readonly,getter=isReady)       bool                    ready;
 @property (nonatomic,readonly,getter=isRunning)     bool                    running;
 @property (nonatomic,readonly,getter=isPaused)      bool                    paused;
 @property (nonatomic,readonly,getter=isDone)        bool                    done;
@@ -34,6 +37,15 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 
 @property (nonatomic,strong,readonly)               NSError                 *error;
 @property (nonatomic)                               bool                    freeverbNeedsCleanup;
+
++ (instancetype)processFile:(NSString *)sourceFilePath
+        withAudioBufferSize:(NSUInteger)maxBufferSize
+                    onQueue:(dispatch_queue_t)processingQueue
+                   compress:(BOOL)compress
+                     reverb:(BOOL)reverb
+                  normalize:(BOOL)normalize
+            progressHandler:(void(^)(double progress))progressHandler
+          completionHandler:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
 
 + (instancetype)processorWithSource:(NSString *)sourceFilePath
                           maxBuffer:(NSUInteger)maxBufferSize
@@ -57,6 +69,8 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 
 @interface OfflineAudioFileProcessor (Compressor)
 
+- (AudioProcessingBlock)vectorCompressionProcessingBlock;
+
 + (AudioProcessingBlock)vcompressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
 
 + (AudioProcessingBlock)compressionProcessingBlockWithSampleRate:(NSUInteger)sampleRate;
@@ -72,6 +86,8 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 @end
 
 @interface OfflineAudioFileProcessor (Normalizer)
+
++ (Float32)getPeakMagnitudeForAudioFile:(NSURL *)audioFileURL;
 
 + (AudioProcessingBlock)normalizeProcessingBlockForAudioFile:(NSString *)audioFilePath maximumMagnitude:(Float32)maximumMagnitude;
 

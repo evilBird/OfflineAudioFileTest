@@ -30,7 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.crossFadeSlider.enabled = NO;
-    [self testOtherStuff];
+    [self testCoolStuff];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -66,6 +66,53 @@
             weakself.progressLabel.text = @"PROCESSING ERROR";
         });
     }];
+}
+
+static dispatch_queue_t processingQueue = nil;
+
+- (void)testCoolStuff
+{
+    if (!processingQueue) {
+        processingQueue = dispatch_queue_create("com.offlineAudioFileProcessor.processingQueue", DISPATCH_QUEUE_SERIAL);
+    }
+    
+    NSUInteger kBufferSize = 1024;
+    __weak ViewController *weakself = self;
+    NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
+    
+    self.myProcessor = [OfflineAudioFileProcessor processFile:testFilePath
+                                          withAudioBufferSize:kBufferSize
+                                                      onQueue:processingQueue
+                                                     compress:YES
+                                                       reverb:YES
+                                                    normalize:YES
+                                              progressHandler:^(double progress) {
+                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                      weakself.progressLabel.text = [NSString stringWithFormat:@"PROCESSING...%.2f",progress];
+                                                  });
+                                              } completionHandler:^(NSURL *fileURL, NSError *error) {
+                                                  if (error) {
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          weakself.progressLabel.text = @"PROCESSING ERROR";
+                                                      });
+                                                  }else{
+                                                      NSLog(@"\nResult path: %@",fileURL.path);
+                                                      NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
+                                                      NSError *pe = [weakself playAudioFileA:fileAURL andAudioFileB:fileURL];
+                                                      if (pe) {
+                                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                                              weakself.progressLabel.text = @"PLAYBACK ERROR";
+                                                          });
+                                                      }else{
+                                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                                              weakself.crossFadeSlider.enabled = YES;
+                                                              weakself.progressLabel.text = @"PLAYING";
+                                                          });
+                                                      }
+                                                  }
+                                              }];
+    
+    
 }
 
 - (void)testOtherStuff
