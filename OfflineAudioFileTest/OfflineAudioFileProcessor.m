@@ -8,129 +8,420 @@
 
 #import "OfflineAudioFileProcessor.h"
 
+@interface OfflineAudioFileProcessor ()
+
+@property (nonatomic,strong,readwrite)               NSString                           *sourceFilePath;
+@property (nonatomic,strong)                         NSString                           *tempResultFilePath;
+@property (nonatomic,strong,readwrite)               NSString                           *resultFilePath;
+
+@property (nonatomic,strong)                         AVAudioFile                        *sourceAudioFile;
+@property (nonatomic,strong)                         AVAudioFile                        *resultAudioFile;
+
+@property (nonatomic,readwrite)                      NSUInteger                         maxBufferSize;
+@property (nonatomic,readwrite)                      NSUInteger                         sourceSampleRate;
+@property (nonatomic,readwrite)                      AVAudioFrameCount                  sourceLength;
+@property (nonatomic,readwrite)                      AVAudioFramePosition               sourcePosition;
+@property (nonatomic,readwrite)                      AVAudioFormat                      *sourceFormat;
+@property (nonatomic,readwrite)                      AVAudioFrameCount                  numSourceFramesRemaining;
+
+@property (nonatomic,readwrite)                      double                             progress;
+@property (nonatomic,readwrite,getter=isRunning)     bool                               running;
+@property (nonatomic,readwrite,getter=isPaused)      bool                               paused;
+@property (nonatomic,readwrite,getter=isDone)        bool                               done;
+@property (nonatomic,readwrite,getter=isCancelled)   bool                               cancelled;
+
+@property (nonatomic,strong,readwrite)               NSError                            *error;
+
+@property (nonatomic,copy)                          AudioProcessingProgressBlock        myProgressBlock;
+@property (nonatomic,copy)                          AudioProcessingCompletionBlock      myCompletionBlock;
+@property (nonatomic,copy)                          AudioProcessingBlock                myProcessingBlock;
+
+
+@end
+
 @implementation OfflineAudioFileProcessor
 
-+ (void)processFile:(NSString *)sourceFilePath withBlock:(AudioProcessingBlock)processingBlock maxBufferSize:(AVAudioFrameCount)maxBufferSize resultPath:(NSString *)resultPath completion:(void(^)(NSString *resultPath, NSError *error))completion
+Float32 GetMaxSampleValueInBuffer(AudioBufferList *bufferList, UInt32 bufferSize)
 {
-    NSError *err = nil;
-    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryAudioProcessing error:&err];
-    if (err) {
-        return completion(nil,err);
-    }
-    [[AVAudioSession sharedInstance]setActive:YES error:&err];
-    if (err) {
-        return completion(nil,err);
-    }
-    
-    NSURL *sourceFileURL = [NSURL fileURLWithPath:sourceFilePath];
-    AVAudioFile *sourceFile = [[AVAudioFile alloc]initForReading:sourceFileURL error:&err];
-    if (err) {
-        return completion(nil,err);
+    Float32 *tempBuffer = (Float32 *)(malloc(sizeof(Float32)*bufferSize));
+    UInt32 numChannels = (UInt32)(bufferList->mNumberBuffers);
+    Float32 maxVal = 0;
+    Float32 myMaxVal = 0;
+    for (UInt32 i = 0; i < numChannels; i ++ ) {
+        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
+        vDSP_vabs(samples, 1, tempBuffer, 1, bufferSize);
+        vDSP_vsort(tempBuffer, bufferSize, -1);
+        maxVal = tempBuffer[1];
+        myMaxVal = ( maxVal >= myMaxVal ) ? ( maxVal ) : ( myMaxVal );
     }
     
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if ([fm fileExistsAtPath:resultPath]) {
-        [fm removeItemAtPath:resultPath error:nil];
-    }
-    
-    AVAudioFormat *sourceFileFormat = sourceFile.processingFormat;
-    NSMutableDictionary *resultFileSettings = [NSMutableDictionary dictionary];
-    resultFileSettings[AVSampleRateKey] = @(sourceFileFormat.sampleRate);
-    resultFileSettings[AVNumberOfChannelsKey] = @(sourceFileFormat.channelCount);
-    NSURL *resultFileURL = [NSURL fileURLWithPath:resultPath];
-    
-    BOOL interleaved = (sourceFileFormat.channelCount > 1);
-    AVAudioFile *resultFile = [[AVAudioFile alloc]initForWriting:resultFileURL settings:resultFileSettings commonFormat:AVAudioPCMFormatFloat32 interleaved:interleaved error:&err];
-    if (err) {
-        return completion(nil,err);
-    }
-    
-    AVAudioFrameCount numSourceFrames = (AVAudioFrameCount)sourceFile.length;
-    AVAudioFrameCount numSourceFramesRemaining = numSourceFrames;
-    sourceFile.framePosition = 0;
-    while (numSourceFramesRemaining) {
-        
-        AVAudioFrameCount bufferSize = ( numSourceFramesRemaining >= maxBufferSize ) ? ( maxBufferSize ) : ( numSourceFramesRemaining );
-        AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:sourceFileFormat frameCapacity:bufferSize];
-        
-        [sourceFile readIntoBuffer:buffer frameCount:bufferSize error:&err];
-        if (err) {
-            break;
-        }
-        
-        AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
-        OSStatus status = processingBlock(bufferList, bufferSize);
-        
-        if (status!=noErr) {
-            break;
-        }
-        
-        [resultFile writeFromBuffer:buffer error:&err];
-        
-        if (err) {
-            break;
-        }
-        
-        numSourceFramesRemaining-=bufferSize;
-        if (sourceFile.framePosition != resultFile.framePosition) {
-            NSLog(@"FRAME POSITIONS DIFFER: SOURCE = %lld, RESULT = %lld",sourceFile.framePosition,resultFile.framePosition);
-        }
-    }
-    sourceFile = nil;
-    resultFile = nil;
-    [[AVAudioSession sharedInstance]setActive:NO error:nil];
-    completion(resultPath,err);
+    free(tempBuffer);
+    return myMaxVal;
 }
 
-+ (void)analyzeFile:(NSString *)sourceFilePath
-          withBlock:(AudioAnalysisBlock)analysisBlock
-      maxBufferSize:(AVAudioFrameCount)maxBufferSize
-         completion:(void(^)(NSError *error))completion
+OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Float32 constant)
+{
+    UInt32 numChannels = (UInt32)(bufferList->mNumberBuffers);
+    for (UInt32 i = 0; i < numChannels; i ++) {
+        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
+        vDSP_vsmul(samples, 1, &constant, samples, 1, bufferSize);
+    }
+    return noErr;
+}
+
++ (instancetype)processorWithSource:(NSString *)sourceFilePath
+                          maxBuffer:(NSUInteger)maxBufferSize
+                    processingBlock:(AudioProcessingBlock)processingBlock
+                      progressBlock:(AudioProcessingProgressBlock)progressBlock
+                    completionBlock:(AudioProcessingCompletionBlock)completionBlock
+{
+    OfflineAudioFileProcessor *processor = [[OfflineAudioFileProcessor alloc]initWithSourceFile:sourceFilePath maxBufferSize:maxBufferSize];
+    [processor setProcessingBlock:processingBlock];
+    [processor setProgressBlock:progressBlock];
+    [processor setCompletionBlock:completionBlock];
+    return processor;
+}
+
+- (void)defaultInit
+{
+    _running = NO;
+    _done = NO;
+    _cancelled = NO;
+    _progress = 0.0;
+    _sourcePosition = 0;
+    _error = nil;
+    _resultFilePath = nil;
+    _tempResultFilePath = nil;
+    [self getReadyToRun];
+}
+
+- (void)getReadyToRun
+{
+    self.error = [self startAudioSession];
+    if (self.error) {
+        return;
+    }
+    
+    self.error = [self setupFiles];
+}
+
+- (NSError *)startAudioSession
 {
     NSError *err = nil;
-    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryAudioProcessing error:&err];
-    if (err) {
-        return completion(err);
-    }
     [[AVAudioSession sharedInstance]setActive:YES error:&err];
+    if (err) {
+        return err;
+    }
+
+    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryAudioProcessing error:&err];
     
     if (err) {
-        return completion(err);
+        return err;
     }
     
-    NSURL *sourceFileURL = [NSURL fileURLWithPath:sourceFilePath];
-    AVAudioFile *sourceFile = [[AVAudioFile alloc]initForReading:sourceFileURL error:&err];
+    [[AVAudioSession sharedInstance]setMode:AVAudioSessionModeDefault error:&err];
+    
+    return err;
+}
+
+- (void)stopAudioSession
+{
+    [[AVAudioSession sharedInstance]setActive:NO error:nil];
+}
+
+- (NSError *)setupFiles
+{
+    NSError *err = nil;
+    NSURL *sourceFileURL = [NSURL fileURLWithPath:self.sourceFilePath];
+    self.sourceAudioFile = [[AVAudioFile alloc]initForReading:sourceFileURL error:&err];
     if (err) {
-        return completion(err);
+        return err;
+    }
+    NSString *sourceFileName = [self.sourceFilePath lastPathComponent];
+    self.tempResultFilePath = [OfflineAudioFileProcessor tempFilePathForFile:sourceFileName];
+    self.sourceFormat = self.sourceAudioFile.processingFormat;
+    self.sourceSampleRate = (NSUInteger)(self.sourceFormat.sampleRate);
+    self.sourceLength = (AVAudioFrameCount)(self.sourceAudioFile.length);
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if ([fm fileExistsAtPath:self.tempResultFilePath]) {
+        [fm removeItemAtPath:self.tempResultFilePath error:nil];
     }
     
-    AVAudioFormat *sourceFileFormat = sourceFile.processingFormat;
-    AVAudioFrameCount numSourceFrames = (AVAudioFrameCount)sourceFile.length;
-    AVAudioFrameCount numSourceFramesRemaining = numSourceFrames;
-    sourceFile.framePosition = 0;
-    while (numSourceFramesRemaining) {
+    NSMutableDictionary *resultFileSettings = [NSMutableDictionary dictionary];
+    resultFileSettings[AVSampleRateKey] = @(self.sourceFormat.sampleRate);
+    resultFileSettings[AVNumberOfChannelsKey] = @(self.sourceFormat.channelCount);
+    NSURL *resultFileURL = [NSURL fileURLWithPath:self.tempResultFilePath];
+    BOOL interleaved = self.sourceFormat.interleaved;
+    AVAudioCommonFormat commonFormat = self.sourceFormat.commonFormat;
+    
+    self.resultAudioFile = [[AVAudioFile alloc]initForWriting:resultFileURL
+                                                     settings:resultFileSettings
+                                                 commonFormat:commonFormat
+                                                  interleaved:interleaved
+                                                        error:&err];
+    
+    return err;
+}
+
+- (void)deletePartialFiles
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:self.tempResultFilePath]) {
+        [fm removeItemAtPath:self.tempResultFilePath error:nil];
+    }
+}
+
+- (void)teardownFiles
+{
+    self.sourceAudioFile = nil;
+    self.resultAudioFile = nil;
+}
+
+- (instancetype)initWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize
+{
+    self = [super init];
+    if (self) {
+        _sourceFilePath = sourceFilePath;
+        _maxBufferSize = maxBufferSize;
+        [self defaultInit];
+    }
+    
+    return self;
+}
+
+- (void)setProgressBlock:(void(^)(double progress))progressBlock
+{
+    self.myProgressBlock = progressBlock;
+}
+
+- (void)setProcessingBlock:(OSStatus(^)(AudioBufferList *buffer, AVAudioFrameCount bufferSize))processingBlock
+{
+    self.myProcessingBlock = processingBlock;
+}
+
+- (void)setCompletionBlock:(void(^)(NSURL *resultFile, NSError *error))completionBlock
+{
+    self.myCompletionBlock = completionBlock;
+}
+
+- (void)start
+{
+    if (self.error) {
+        self.myCompletionBlock(nil,self.error);
+        return;
+    }
+    
+    [self doProcessing];
+}
+
+- (void)doProcessing
+{
+    if (self.isCancelled) {
+        return;
+    }
+    
+    __weak OfflineAudioFileProcessor *weakself = self;
+    
+    [[NSOperationQueue new]addOperationWithBlock:^{
         
-        AVAudioFrameCount bufferSize = ( numSourceFramesRemaining >= maxBufferSize ) ? ( maxBufferSize ) : ( numSourceFramesRemaining );
-        AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:sourceFileFormat frameCapacity:bufferSize];
+        weakself.running = YES;
+        weakself.progress = 0.0;
+        AVAudioFrameCount numSourceFrames = weakself.sourceLength;
+        AVAudioFrameCount numSourceFramesRemaining = numSourceFrames;
+        weakself.sourceAudioFile.framePosition = 0;
+        weakself.sourcePosition = weakself.sourceAudioFile.framePosition;
+        AVAudioFrameCount myMaxBufferSize = (AVAudioFrameCount)weakself.maxBufferSize;
+        AVAudioFormat *mySourceFormat = weakself.sourceFormat;
+        NSError *err = nil;
         
-        [sourceFile readIntoBuffer:buffer frameCount:bufferSize error:&err];
+        while (numSourceFramesRemaining && !weakself.isCancelled && !weakself.isPaused ) {
+            
+            AVAudioFrameCount bufferSize = ( numSourceFramesRemaining >= myMaxBufferSize ) ? ( myMaxBufferSize ) : ( numSourceFramesRemaining );
+            AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:mySourceFormat frameCapacity:bufferSize];
+            
+            [weakself.sourceAudioFile readIntoBuffer:buffer frameCount:bufferSize error:&err];
+            if (err) {
+                break;
+            }
+
+            AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
+            OSStatus status = weakself.myProcessingBlock(bufferList, bufferSize);
+            
+            if (status!=noErr) {
+                err = [NSError errorWithDomain:@"OfflineAudioFileProcessor" code:status userInfo:nil];
+                break;
+            }
+            
+            [weakself.resultAudioFile writeFromBuffer:buffer error:&err];
+            
+            if (err) {
+                break;
+            }
+            
+            numSourceFramesRemaining-=bufferSize;
+            weakself.numSourceFramesRemaining = numSourceFramesRemaining;
+            weakself.sourcePosition = weakself.sourceAudioFile.framePosition;
+            weakself.progress = (double)(weakself.sourcePosition)/(double)(weakself.sourceLength);
+            
+        }
+        
+        NSURL *resultURL = nil;
         
         if (err) {
-            break;
+            weakself.error = err;
+        }else{
+            weakself.resultFilePath = weakself.tempResultFilePath;
+            resultURL = [NSURL fileURLWithPath:weakself.resultFilePath];
         }
         
-        AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
-        OSStatus status = analysisBlock(bufferList, bufferSize);
-        if (status!=noErr) {
-            break;
+        if (!weakself.isCancelled && !weakself.isPaused) {
+            weakself.running = NO;
+            weakself.done = YES;
+            [weakself cleanup];
+            weakself.myCompletionBlock(resultURL,err);
+        }else if (weakself.isCancelled){
+            [weakself cleanup];
+            weakself.running = NO;
+        }else if (weakself.isPaused){
+            weakself.running = NO;
         }
         
-        numSourceFramesRemaining-=bufferSize;
+    }];
+    
+}
+
+- (void)setProgress:(double)progress
+{
+    _progress = progress;
+    if (self.myProgressBlock) {
+        self.myProgressBlock(progress);
     }
-    [[AVAudioSession sharedInstance]setActive:NO error:nil];
-    sourceFile = nil;
-    completion(err);
+}
+
+- (void)pause
+{
+    if (!self.isRunning) {
+        return;
+    }
+    self.paused = YES;
+}
+
+- (void)resume
+{
+    if (!self.isPaused) {
+        return;
+    }
+    
+    self.paused = NO;
+    [self resumeProcessing];
+}
+
+- (void)resumeProcessing
+{
+    if (self.isCancelled) {
+        return;
+    }
+    
+    __weak OfflineAudioFileProcessor *weakself = self;
+    
+    [[NSOperationQueue new]addOperationWithBlock:^{
+        
+        weakself.running = YES;
+        AVAudioFrameCount numSourceFrames = weakself.sourceLength;
+        AVAudioFrameCount numSourceFramesRemaining = weakself.numSourceFramesRemaining;
+        AVAudioFrameCount myMaxBufferSize = (AVAudioFrameCount)weakself.maxBufferSize;
+        AVAudioFormat *mySourceFormat = weakself.sourceFormat;
+        NSError *err = nil;
+        
+        while (numSourceFramesRemaining && !weakself.isCancelled && !weakself.isPaused ) {
+            
+            AVAudioFrameCount bufferSize = ( numSourceFramesRemaining >= myMaxBufferSize ) ? ( myMaxBufferSize ) : ( numSourceFramesRemaining );
+            AVAudioPCMBuffer *buffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat:mySourceFormat frameCapacity:bufferSize];
+            
+            [weakself.sourceAudioFile readIntoBuffer:buffer frameCount:bufferSize error:&err];
+            if (err) {
+                break;
+            }
+            
+            AudioBufferList *bufferList = (AudioBufferList *)buffer.audioBufferList;
+            OSStatus status = weakself.myProcessingBlock(bufferList, bufferSize);
+            
+            if (status!=noErr) {
+                err = [NSError errorWithDomain:@"OfflineAudioFileProcessor" code:status userInfo:nil];
+                break;
+            }
+            
+            [weakself.resultAudioFile writeFromBuffer:buffer error:&err];
+            
+            if (err) {
+                break;
+            }
+            
+            numSourceFramesRemaining-=bufferSize;
+            weakself.numSourceFramesRemaining = numSourceFramesRemaining;
+            weakself.sourcePosition = weakself.sourceAudioFile.framePosition;
+            weakself.progress = (double)(weakself.sourcePosition)/(double)(weakself.sourceLength);
+            
+        }
+        
+        NSURL *resultURL = nil;
+        
+        if (err) {
+            weakself.error = err;
+        }else{
+            weakself.resultFilePath = weakself.tempResultFilePath;
+            resultURL = [NSURL fileURLWithPath:weakself.resultFilePath];
+        }
+        
+        if (!weakself.isCancelled && !weakself.isPaused) {
+            weakself.running = NO;
+            weakself.done = YES;
+            [weakself cleanup];
+            weakself.myCompletionBlock(resultURL,err);
+        }else if (weakself.isCancelled){
+            [weakself cleanup];
+            weakself.running = NO;
+        }else if (weakself.isPaused){
+            weakself.running = NO;
+        }
+        
+    }];
+}
+
+- (void)cancel
+{
+    if (!self.isRunning && !self.isPaused) {
+        return;
+    }
+    
+    self.cancelled = YES;
+    if (self.isPaused) {
+        self.paused = NO;
+        [self cleanup];
+    }
+}
+
+- (void)cleanup
+{
+    if (self.isCancelled || self.error) {
+        [self deletePartialFiles];
+    }
+    if (self.freeverbNeedsCleanup){
+        [self freeverbBlockCleanup];
+    }
+    
+    
+    [self stopAudioSession];
+    [self teardownFiles];
+}
+
+- (void)dealloc
+{
+    _myCompletionBlock = nil;
+    _myProcessingBlock = nil;
+    _myProgressBlock = nil;
 }
 
 @end

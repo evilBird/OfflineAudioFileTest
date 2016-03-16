@@ -50,6 +50,7 @@ OSStatus NormalizeAudioBuffer(AudioBufferList *bufferList, Float32 peakMagnitude
     return myPeakMag;
 }
 
+
 + (AudioProcessingBlock)normalizeProcessingBlockForAudioFile:(NSString *)audioFilePath maximumMagnitude:(Float32)maximumMagnitude
 {
     NSParameterAssert(audioFilePath);

@@ -12,19 +12,45 @@
 
 typedef OSStatus (^AudioProcessingBlock)(AudioBufferList *buffer, AVAudioFrameCount bufferSize);
 typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCount bufferSize);
+typedef void (^AudioProcessingProgressBlock)(double progress);
+typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error);
 
 @interface OfflineAudioFileProcessor : NSObject
 
-+ (void)processFile:(NSString *)sourceFilePath
-          withBlock:(AudioProcessingBlock)processingBlock
-      maxBufferSize:(AVAudioFrameCount)maxBufferSize
-         resultPath:(NSString *)resultPath
-         completion:(void(^)(NSString *resultPath, NSError *error))completion;
+@property (nonatomic,strong,readonly)               NSString                *sourceFilePath;
+@property (nonatomic,strong,readonly)               NSString                *resultFilePath;
 
-+ (void)analyzeFile:(NSString *)sourceFilePath
-          withBlock:(AudioAnalysisBlock)analysisBlock
-      maxBufferSize:(AVAudioFrameCount)maxBufferSize
-         completion:(void(^)(NSError *error))completion;
+@property (nonatomic,readonly)                      NSUInteger              maxBufferSize;
+@property (nonatomic,readonly)                      NSUInteger              sourceSampleRate;
+@property (nonatomic,readonly)                      AVAudioFrameCount       sourceLength;
+@property (nonatomic,readonly)                      AVAudioFramePosition    sourcePosition;
+@property (nonatomic,readonly)                      AVAudioFormat           *sourceFormat;
+
+@property (nonatomic,readonly)                      double                  progress;
+@property (nonatomic,readonly,getter=isRunning)     bool                    running;
+@property (nonatomic,readonly,getter=isPaused)      bool                    paused;
+@property (nonatomic,readonly,getter=isDone)        bool                    done;
+@property (nonatomic,readonly,getter=isCancelled)   bool                    cancelled;
+
+@property (nonatomic,strong,readonly)               NSError                 *error;
+@property (nonatomic)                               bool                    freeverbNeedsCleanup;
+
++ (instancetype)processorWithSource:(NSString *)sourceFilePath
+                          maxBuffer:(NSUInteger)maxBufferSize
+                    processingBlock:(AudioProcessingBlock)processingBlock
+                      progressBlock:(AudioProcessingProgressBlock)progressBlock
+                    completionBlock:(AudioProcessingCompletionBlock)completionBlock;
+
+- (instancetype)initWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize;
+
+- (void)setProgressBlock:(void(^)(double progress))progressBlock;
+- (void)setProcessingBlock:(OSStatus (^)(AudioBufferList *buffer, AVAudioFrameCount bufferSize))processingBlock;
+- (void)setCompletionBlock:(void(^)(NSURL *resultFile, NSError *error))completionBlock;
+
+- (void)start;
+- (void)pause;
+- (void)resume;
+- (void)cancel;
 
 @end
 
@@ -66,10 +92,31 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 
 + (void)freeverbPrintParms;
 + (void)freebverbCleanup;
+- (AudioProcessingBlock)mediumReverbProcessingBlock;
+- (void)freeverbBlockCleanup;
 
 @end
 
 @interface OfflineAudioFileProcessor (ConvenienceMethods)
+
+Float32 GetMaxSampleValueInBuffer(AudioBufferList *bufferList, UInt32 bufferSize);
+OSStatus NormalizeBufferList(AudioBufferList *bufferList, UInt32 bufferSize, Float32 constant);
+
++ (UInt32)sampleRateForFile:(NSString *)filePath;
+
++ (AVAudioFrameCount)frameLengthForFile:(NSString *)filePath;
+
++ (void)processFile:(NSString *)sourceFilePath
+          withBlock:(AudioProcessingBlock)processingBlock
+      maxBufferSize:(AVAudioFrameCount)maxBufferSize
+         resultPath:(NSString *)resultPath
+         completion:(void(^)(NSString *resultPath, NSError *error))completion;
+
++ (void)analyzeFile:(NSString *)sourceFilePath
+          withBlock:(AudioAnalysisBlock)analysisBlock
+      maxBufferSize:(AVAudioFrameCount)maxBufferSize
+         completion:(void(^)(NSError *error))completion;
+
 
 + (void)doDefaultProcessingWithSourceFile:(NSString *)sourceFilePath
                                onProgress:(void(^)(double progress))progressBlock
@@ -81,6 +128,7 @@ typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCoun
 @interface OfflineAudioFileProcessor (Test)
 
 + (void)testFile:(NSString *)testFileName;
+
 + (NSString *)testSoloFileName;
 + (NSString *)testAccompFileName;
 + (NSString *)testSourceFilePathForFile:(NSString *)testFileName;

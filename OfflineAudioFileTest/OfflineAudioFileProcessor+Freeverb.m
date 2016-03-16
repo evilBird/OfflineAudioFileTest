@@ -684,6 +684,30 @@ static OfflineAudioFileProcessor *processor = nil;
                                                                     damping:smallroom_damp];
 }
 
+- (AudioProcessingBlock)mediumReverbProcessingBlock
+{
+    
+    freeverb_setup(self, (UInt32)self.sourceSampleRate);
+    freeverb_setwet(self, 0.25);
+    freeverb_setdry(self, 0.75);
+    freeverb_setroomsize(self, 0.4);
+    freeverb_setwidth(self, 0.7);
+    freeverb_setdamp(self, 0.6);
+    self.freeverbNeedsCleanup = YES;
+    __weak OfflineAudioFileProcessor *weakself = self;
+    AudioProcessingBlock freeverbBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
+        return dsp_do_freeverb(weakself, buffer, bufferSize);
+    };
+    
+    return [freeverbBlock copy];
+}
+
+- (void)freeverbBlockCleanup
+{
+    freeverb_reset_parms(self);
+    freeverb_free(self);
+}
+
 + (AudioProcessingBlock)freeverbProcessingBlockWithSampleRate:(NSUInteger)sampleRate
                                                        wetMix:(Float32)wetMix
                                                        dryMix:(Float32)dryMix
@@ -692,6 +716,7 @@ static OfflineAudioFileProcessor *processor = nil;
                                                       damping:(Float32)damping
 {
     OfflineAudioFileProcessor *processor = [OfflineAudioFileProcessor new];
+    
     freeverb_setup(processor, (UInt32)sampleRate);
     freeverb_setwet(processor, wetMix);
     freeverb_setdry(processor, dryMix);
