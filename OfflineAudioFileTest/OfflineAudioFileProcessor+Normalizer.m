@@ -25,11 +25,8 @@
     return [normalizeBlock copy];
 }
 
-
-
-- (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant fadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs
+- (AudioProcessingBlock)rampProcessingBlockWithFadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs
 {
-    AudioProcessingBlock normalizeBlock = [self normalizeProcessingBlockWithConstant:normConstant];
     UInt32 sampleRate = (UInt32)self.sourceFormat.sampleRate;
     UInt32 sampleLength = (UInt32)self.sourceLength;
     UInt32 fadeInNumSamples = fadeInSecs*sampleRate;
@@ -42,8 +39,6 @@
     
     AudioProcessingBlock myBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
         OSStatus err = noErr;
-        err = normalizeBlock(bufferList, bufferSize);
-        
         UInt32 expectedNumSamplesProcessed = (numSamplesProcessed+(UInt32)bufferSize);
         UInt32 numChannels = bufferList->mNumberBuffers;
         Float32 *ramp = NULL;
@@ -131,6 +126,37 @@
         
         free(ramp);
         
+        return err;
+    };
+    
+    return [myBlock copy];
+
+}
+
+- (AudioProcessingBlock)postProcessingBlockWithNormalizingConstant:(Float32)normConstant fadeInRampTime:(Float32)fadeInSecs fadeOutRampTime:(Float32)fadeOutSecs
+{
+    AudioProcessingBlock normalizeBlock = [self normalizeProcessingBlockWithConstant:normConstant];
+    AudioProcessingBlock rampBlock = [self rampProcessingBlockWithFadeInDuration:fadeInSecs fadeOutDuration:fadeOutSecs];
+    
+    AudioProcessingBlock postProcessingBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
+        OSStatus err = noErr;
+        err = normalizeBlock(bufferList, bufferSize);
+        err = rampBlock(bufferList, bufferSize);
+        return err;
+    };
+    
+    return [postProcessingBlock copy];
+}
+
+- (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant fadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs
+{
+    AudioProcessingBlock normalizeBlock = [self normalizeProcessingBlockWithConstant:normConstant];
+    AudioProcessingBlock postProcessingBlock = [self rampProcessingBlockWithFadeInDuration:fadeInSecs fadeOutDuration:fadeOutSecs];
+    
+    AudioProcessingBlock myBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
+        OSStatus err = noErr;
+        err = normalizeBlock(bufferList, bufferSize);
+        err = postProcessingBlock(bufferList, bufferSize);
         return err;
     };
     

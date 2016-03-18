@@ -684,9 +684,9 @@ void freeverb_setup(__unsafe_unretained OfflineAudioFileProcessor *x, UInt32 sam
     freeverb_setup(self, (UInt32)self.sourceFormat.sampleRate);
     freeverb_setwet(self, 0.35);
     freeverb_setdry(self, 0.65);
-    freeverb_setroomsize(self, 0.5);
+    freeverb_setroomsize(self, 0.45);
     freeverb_setwidth(self, 0.8);
-    freeverb_setdamp(self, 0.4);
+    freeverb_setdamp(self, 0.45);
     __weak OfflineAudioFileProcessor *weakself = self;
     AudioProcessingBlock freeverbBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
         return dsp_do_freeverb(weakself, buffer, bufferSize);

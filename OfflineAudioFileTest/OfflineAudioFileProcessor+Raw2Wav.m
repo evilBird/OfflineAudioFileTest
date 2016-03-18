@@ -33,7 +33,7 @@
 {
     NSString *fileName = [rawFilePath lastPathComponent];
     NSString *destinationPath = [OfflineAudioFileProcessor tempFilePathForFile:fileName extension:@"wav"];
-    
+
     return [self
             convertRaw:rawFilePath
             toWav:destinationPath
@@ -50,6 +50,10 @@
            bitsPerSample:(short)bitsPerSample
                    error:(NSError *__autoreleasing *)error
 {
+    
+    if (self.isCancelled) {
+        return nil;
+    }
     
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *err = nil;
