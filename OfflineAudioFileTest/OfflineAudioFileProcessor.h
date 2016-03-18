@@ -121,10 +121,10 @@ Float32* GenerateFloatBuffer(UInt32 bufferLength, Float32 initalValue);
 
 @interface OfflineAudioFileProcessor (ConvenienceMethods)
 
-+ (instancetype)doDefaultProcessingWithSourceFile:(NSString *)sourceFilePath
-                                       onProgress:(void(^)(double progress))progressBlock
-                                        onSuccess:(void(^)(NSURL *resultFile))successBlock
-                                        onFailure:(void(^)(NSError *error))failureBlock;
++ (instancetype)convertAndProcessRawFile:(NSString *)rawFilePath
+                              onProgress:(void(^)(double progress))progressBlock
+                               onSuccess:(void(^)(NSURL *resultFile))successBlock
+                               onFailure:(void(^)(NSError *error))failureBlock;
 
 + (NSString *)tempFilePathForFile:(NSString *)fileName;
 + (NSString *)tempFilePathForFile:(NSString *)fileName extension:(NSString *)extension;
