@@ -271,11 +271,12 @@ OSStatus freeverb_perf8(__unsafe_unretained OfflineAudioFileProcessor *x, AudioB
     UInt32 numChannels = buffer->mNumberBuffers;
     UInt32 idx1 = 0;
     UInt32 idx2 = ( numChannels > 1 ) ? ( 1 ) : ( 0 );
-    
+    bool mono_mix = ( idx2 == 0 ) ? ( true ) : ( false );
     Float32 *in1 = (Float32 *)(buffer->mBuffers[idx1].mData);
     Float32 *in2 = (Float32 *)(buffer->mBuffers[idx2].mData);
     Float32 *out1 = (Float32 *)(buffer->mBuffers[idx1].mData);
     Float32 *out2 = (Float32 *)(buffer->mBuffers[idx2].mData);
+    
     SInt32 n = bufferSize;
     SInt32 i;
     

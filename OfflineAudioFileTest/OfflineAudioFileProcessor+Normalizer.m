@@ -41,8 +41,8 @@
     __block Float32 prevRampEndValue = 0.0;
     
     AudioProcessingBlock myBlock = ^(AudioBufferList *bufferList, AVAudioFrameCount bufferSize){
-        
-        normalizeBlock(bufferList, bufferSize);
+        OSStatus err = noErr;
+        err = normalizeBlock(bufferList, bufferSize);
         
         UInt32 expectedNumSamplesProcessed = (numSamplesProcessed+(UInt32)bufferSize);
         UInt32 numChannels = bufferList->mNumberBuffers;
@@ -121,7 +121,7 @@
         numSamplesProcessed = expectedNumSamplesProcessed;
         
         if (!ramp) {
-            return noErr;
+            return err;
         }
         
         for (UInt32 i = 0; i < numChannels; i++) {
@@ -131,8 +131,9 @@
         
         free(ramp);
         
-        return noErr;
+        return err;
     };
+    
     return [myBlock copy];
 }
 
