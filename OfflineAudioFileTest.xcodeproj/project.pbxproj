@@ -12,6 +12,10 @@
 		F21247271C8F731700C54911 /* OfflineAudioFileProcessor+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */; };
 		F21247291C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m in Sources */ = {isa = PBXBuildFile; fileRef = F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */; };
 		F212472B1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */; };
+		F2C920901C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m in Sources */ = {isa = PBXBuildFile; fileRef = F2C9208F1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m */; };
+		F2C920931C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m in Sources */ = {isa = PBXBuildFile; fileRef = F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */; };
+		F2C920961C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k in Resources */ = {isa = PBXBuildFile; fileRef = F2C920941C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k */; };
+		F2C920971C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48o in Resources */ = {isa = PBXBuildFile; fileRef = F2C920951C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48o */; };
 		F2E4A2B51C8E482500E86A5F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2B41C8E482500E86A5F /* main.m */; };
 		F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2B71C8E482500E86A5F /* AppDelegate.m */; };
 		F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E4A2BA1C8E482500E86A5F /* ViewController.m */; };
@@ -48,6 +52,11 @@
 		F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Test.m"; sourceTree = "<group>"; };
 		F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Compressor.m"; sourceTree = "<group>"; };
 		F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Normalizer.m"; sourceTree = "<group>"; };
+		F2C9208E1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OfflineAudioFileProcessor+Functions.h"; sourceTree = "<group>"; };
+		F2C9208F1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Functions.m"; sourceTree = "<group>"; };
+		F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Raw2Wav.m"; sourceTree = "<group>"; };
+		F2C920941C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k */ = {isa = PBXFileReference; lastKnownFileType = file; path = queen_bohemian_rhapsody.000.48k; sourceTree = "<group>"; };
+		F2C920951C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48o */ = {isa = PBXFileReference; lastKnownFileType = file; path = queen_bohemian_rhapsody.000.48o; sourceTree = "<group>"; };
 		F2E4A2B01C8E482400E86A5F /* OfflineAudioFileTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineAudioFileTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2E4A2B41C8E482500E86A5F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F2E4A2B61C8E482500E86A5F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -96,7 +105,10 @@
 			children = (
 				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
 				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */,
 				F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */,
+				F2C9208E1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.h */,
+				F2C9208F1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m */,
 				F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */,
 				F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */,
 				F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */,
@@ -146,6 +158,9 @@
 				F2E4A2BC1C8E482500E86A5F /* Main.storyboard */,
 				F2E4A2BF1C8E482500E86A5F /* Assets.xcassets */,
 				F2E4A2C11C8E482500E86A5F /* LaunchScreen.storyboard */,
+				F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */,
+				F2C920941C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k */,
+				F2C920951C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48o */,
 				F2E4A2C41C8E482500E86A5F /* Info.plist */,
 				F2E4A2B31C8E482500E86A5F /* Supporting Files */,
 				F263DF011C8F8CBA00F0464C /* OfflineAudioFileProcessor */,
@@ -158,7 +173,6 @@
 			isa = PBXGroup;
 			children = (
 				F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */,
-				F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */,
 				F2E4A2B41C8E482500E86A5F /* main.m */,
 			);
 			name = "Supporting Files";
@@ -255,9 +269,11 @@
 			files = (
 				F2E4A2E11C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav in Resources */,
 				F2E4A2C31C8E482500E86A5F /* LaunchScreen.storyboard in Resources */,
+				F2C920971C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48o in Resources */,
 				F2E4A2E21C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav in Resources */,
 				F2E4A2C01C8E482500E86A5F /* Assets.xcassets in Resources */,
 				F2E4A2BE1C8E482500E86A5F /* Main.storyboard in Resources */,
+				F2C920961C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +298,8 @@
 				F212471F1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m in Sources */,
 				F21247291C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m in Sources */,
 				F2E60A3D1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m in Sources */,
+				F2C920901C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m in Sources */,
+				F2C920931C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m in Sources */,
 				F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */,
 				F212471C1C8F53C100C54911 /* AudioSpectrumProcessor.m in Sources */,
 				F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */,

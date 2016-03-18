@@ -664,7 +664,7 @@ void freeverb_setup(__unsafe_unretained OfflineAudioFileProcessor *x, UInt32 sam
 
 - (AudioProcessingBlock)mediumReverbProcessingBlock
 {
-    freeverb_setup(self, (UInt32)self.sourceSampleRate);
+    freeverb_setup(self, (UInt32)self.sourceFormat.sampleRate);
     freeverb_setwet(self, 0.25);
     freeverb_setdry(self, 0.75);
     freeverb_setroomsize(self, 0.4);

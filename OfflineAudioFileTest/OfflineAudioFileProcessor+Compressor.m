@@ -10,12 +10,12 @@
 
 @implementation OfflineAudioFileProcessor (Compressor)
 
-#define DEFAULT_LOOKAHEAD_MS   1.0
-#define DEFAULT_ATTACK_MS      1.0
-#define DEFAULT_RELEASE_MS     300.0
+#define DEFAULT_LOOKAHEAD_MS   0.5
+#define DEFAULT_ATTACK_MS      0.1
+#define DEFAULT_RELEASE_MS     30.0
 #define DEFAULT_WINDOW_MS      3.0
 #define DEFAULT_SLOPE          0.5
-#define DEFAULT_THRESHOLD      0.5
+#define DEFAULT_THRESHOLD      0.2
 
 void print_samples(Float32 *samples, UInt32 numSamples, const char *tag){
     printf("\nPRINT BUFFER: %s (n = %u)",tag,numSamples);
@@ -107,7 +107,19 @@ Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize
     return peakRMS;
 }
 
-static UInt32 sampleCt = 0;
+Float32 GetBufferMaximumMagnitude(AudioBufferList *bufferList, UInt32 bufferSize)
+{
+    UInt32 numChannels = (UInt32)(bufferList->mNumberBuffers);
+    Float32 maxVal;
+    Float32 myMaxVal = 0;
+    for (UInt32 i = 0; i < numChannels; i ++ ) {
+        Float32 *samples = (Float32 *)(bufferList->mBuffers[i].mData);
+        vDSP_maxmgv(samples, 1, &maxVal, bufferSize);
+        myMaxVal = ( maxVal >= myMaxVal ) ? ( maxVal ) : ( myMaxVal );
+    }
+    
+    return myMaxVal;
+}
 
 OSStatus vcompress
 (
@@ -123,10 +135,8 @@ OSStatus vcompress
 )
 {
     
-    Float32 preGain = 1.0;
-    
-    threshold *= 0.01;          // threshold to unity (0...1)
-    slope *= 0.01;              // slope to unity
+    //threshold *= 0.01;          // threshold to unity (0...1)
+    //slope *= 0.01;              // slope to unity
     lookaheadtime_ms *= 1e-3;                // lookahead time to seconds
     windowtime_ms *= 1e-3;               // window time to seconds
     attacktime_ms *= 1e-3;               // attack time to seconds
@@ -146,7 +156,7 @@ OSStatus vcompress
     UInt32     window_num_samples = (UInt32) (sampleRate * windowtime_ms);
     
     UInt32 numChannels = audioBufferList->mNumberBuffers;
-    Float32 channelNormalizeScalar = preGain/(Float32)numChannels;
+    Float32 channelNormalizeScalar = 1.0/(Float32)numChannels;
     
     for (UInt32 i = 0; i < numChannels; i++) {
         

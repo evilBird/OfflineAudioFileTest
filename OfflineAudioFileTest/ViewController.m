@@ -13,7 +13,7 @@
 
 @interface ViewController (){
     NSUInteger kSampleRate;
-    AVAudioFrameCount kBlockSize;
+    AVAudioFrameCount kBufferSize;
 }
 @property (nonatomic,strong)                        OfflineAudioFileProcessor       *myProcessor;
 @property (nonatomic,strong)                        AVAudioPlayer                   *audioPlayerA;
@@ -34,8 +34,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.crossFadeSlider.enabled = NO;
-    [self testOtherCoolStuff];
+    kBufferSize = 1024;
+        [self testCoolerStuff];
     // Do any additional setup after loading the view, typically from a nib.
+}
+
++ (NSString *)rawSoloFilePath
+{
+    NSString *rawSoloFileName = @"queen_bohemian_rhapsody.000.48k";
+    NSString *path = [[NSBundle mainBundle]pathForResource:rawSoloFileName ofType:nil];
+    NSParameterAssert(path);
+    return path;
+}
+
++ (NSString *)rawAccompFilePath
+{
+    NSString *rawAccompFileName = @"queen_bohemian_rhapsody.000.48o";
+    NSString *path = [[NSBundle mainBundle]pathForResource:rawAccompFileName ofType:nil];
+    NSParameterAssert(path);
+    return path;
 }
 
 - (void)testOtherCoolStuff
@@ -59,10 +76,43 @@
     }];
 }
 
+- (void)testCoolerStuff
+{
+    NSString *rawFilePath = [ViewController rawAccompFilePath];
+    __weak ViewController *weakself = self;
+    self.myProcessor = [OfflineAudioFileProcessor convertAndProcessRawFile:rawFilePath
+                                                                onProgress:^(double progress) {
+                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                        weakself.progressLabel.text = [NSString stringWithFormat:@"PROCESSING...%.2f",progress];
+                                                                    });
+                                                                } onSuccess:^(NSURL *resultFile) {
+                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                        
+                                                                        weakself.pauseButton.hidden = YES;
+                                                                        weakself.cancelButton.hidden = YES;
+                                                                        weakself.crossFadeSlider.enabled = YES;
+                                                                        
+                                                                        if ([weakself playAudioFile:resultFile]) {
+                                                                            weakself.progressLabel.text = @"PLAYBACK ERROR!";
+                                                                        }else{
+                                                                            weakself.progressLabel.text = @"SUCCESS! PLAYING RESULT...";
+                                                                        }
+                                                                        NSLog(@"convert and process finished writing to file: %@",resultFile.path);
+                                                                    });
+
+                                                                } onFailure:^(NSError *error) {
+                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                        weakself.pauseButton.hidden = YES;
+                                                                        weakself.cancelButton.hidden = YES;
+                                                                        weakself.progressLabel.text = @"ERROR!";
+                                                                    });
+                                                                    
+                                                                    NSLog(@"PROCESSING FAILED WITH ERROR: %@",error);
+                                                                }];
+}
+
 - (void)testCoolStuff
 {
-    NSUInteger kBufferSize = 1024;
-
     __weak ViewController *weakself = self;
     NSString *testFilePath = [OfflineAudioFileProcessor testSourceFilePathForFile:[OfflineAudioFileProcessor testAccompFileName]];
     NSURL *fileAURL = [NSURL fileURLWithPath:testFilePath];
@@ -133,6 +183,29 @@
                                                       }
                                                   }];
     [self.myProcessor start];
+}
+
+- (NSError *)playAudioFile:(NSURL *)fileURL
+{
+    NSError *err = nil;
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setActive:YES error:&err];
+    
+    if (err) {
+        return err;
+    }
+    
+    [session setCategory:AVAudioSessionCategoryPlayback error:&err];
+    if (err) {
+        return err;
+    }
+    
+    self.audioPlayerA = [[AVAudioPlayer alloc]initWithContentsOfURL:fileURL error:&err];
+    self.audioPlayerA.volume = 1.0;
+    self.crossFadeSlider.hidden = YES;
+    [self.audioPlayerA play];
+
+    return nil;
 }
 
 - (NSError *)playAudioFileA:(NSURL *)fileAURL andAudioFileB:(NSURL *)fileBURL

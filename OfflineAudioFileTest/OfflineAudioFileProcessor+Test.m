@@ -30,17 +30,27 @@
 
 + (NSString *)tempFilePathForFile:(NSString *)fileName
 {
+    return [OfflineAudioFileProcessor tempFilePathForFile:fileName extension:nil];
+}
+
++ (NSString *)tempFilePathForFile:(NSString *)fileName extension:(NSString *)extension
+{
     NSString *tempFolderPath = NSTemporaryDirectory();
     NSNumber *randomTag = [NSNumber numberWithInteger:arc4random_uniform(1000000)];
     NSString *tempFileName = [NSString stringWithFormat:@"temp-%@-%@",randomTag,fileName];
-    NSString *tempFilePath = [tempFolderPath stringByAppendingPathComponent:tempFileName];
+    NSString *tempFilePath = nil;
+    if (!extension) {
+        tempFilePath = [tempFolderPath stringByAppendingPathComponent:tempFileName];
+    }else{
+        tempFilePath = [[tempFolderPath stringByAppendingPathComponent:tempFileName]stringByAppendingPathExtension:extension];
+    }
+    
     NSFileManager *fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:tempFilePath]) {
         [fm removeItemAtPath:tempFilePath error:nil];
     }
     return tempFilePath;
 }
-
 
 + (NSString *)testResultPathForFile:(NSString *)fileName
 {

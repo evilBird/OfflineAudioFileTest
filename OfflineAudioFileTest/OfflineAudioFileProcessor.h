@@ -21,14 +21,19 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 @property (nonatomic,strong,readonly)                   NSString                *resultFilePath;
 
 @property (nonatomic,readonly)                          NSUInteger              maxBufferSize;
-@property (nonatomic,readonly)                          NSUInteger              sourceSampleRate;
-@property (nonatomic,readonly)                          Float32                 measuredPeakOutputRMS;
-@property (nonatomic,readonly)                          Float32                 channelNormalizedMaxRMS;
+//@property (nonatomic,readonly)                          NSUInteger              sourceSampleRate;
+
+@property (nonatomic,readonly)                          Float32                 maxMeasuredOutputMagnitude;
+@property (nonatomic,readonly)                          Float32                 maxAllowedPerChannelMagnitude;
+//@property (nonatomic,readonly)                          Float32                 measuredPeakOutputRMS;
+//@property (nonatomic,readonly)                          Float32                 channelNormalizedMaxRMS;
 @property (nonatomic,readonly)                          Float32                 normalizeConstant;
 
 @property (nonatomic,readonly)                          AVAudioFrameCount       sourceLength;
 @property (nonatomic,readonly)                          AVAudioFramePosition    sourcePosition;
-@property (nonatomic,readonly)                          AVAudioFormat           *sourceFormat;
+
+@property (nonatomic,strong,readonly)                   AVAudioFormat           *sourceFormat;
+@property (nonatomic,strong)                            AVAudioFormat           *targetFormat;
 
 @property (nonatomic,getter=doesNormalize)              bool                    doNormalize;
 @property (nonatomic,getter=doesReverb)                 bool                    doReverb;
@@ -56,6 +61,14 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
             progressHandler:(void(^)(double progress))progressHandler
           completionHandler:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
 
++ (instancetype)processFile:(NSString *)sourceFilePath
+        withAudioBufferSize:(NSUInteger)maxBufferSize
+                   compress:(BOOL)compress
+                     reverb:(BOOL)reverb
+                forceStereo:(BOOL)forceStereo
+            progressHandler:(void(^)(double progress))progressHandler
+          completionHandler:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
+
 - (instancetype)initWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize;
 
 - (void)setProgressBlock:(void(^)(double progress))progressBlock;
@@ -73,7 +86,12 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 @interface OfflineAudioFileProcessor (Compressor)
 
 void print_samples(Float32 *samples, UInt32 numSamples, const char *tag);
+
 Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize, UInt32 windowSize);
+
+Float32 GetBufferMaximumMagnitude(AudioBufferList *bufferList, UInt32 bufferSize);
+
+Float32* GenerateFloatBuffer(UInt32 bufferLength, Float32 initalValue);
 
 - (AudioProcessingBlock)vectorCompressionProcessingBlock;
 
@@ -82,6 +100,7 @@ Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize
 @interface OfflineAudioFileProcessor (Normalizer)
 
 - (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant;
+- (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant fadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs;
 
 @end
 
@@ -92,12 +111,22 @@ Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize
 
 @end
 
+@interface OfflineAudioFileProcessor (Raw2Wav)
+
++ (void)convertRaw2Wav:(NSString *)rawFilePath completion:(void(^)(NSString *wavFilePath, NSError *error))completion;
+@end
+
 @interface OfflineAudioFileProcessor (ConvenienceMethods)
 
 + (instancetype)doDefaultProcessingWithSourceFile:(NSString *)sourceFilePath
                                        onProgress:(void(^)(double progress))progressBlock
                                         onSuccess:(void(^)(NSURL *resultFile))successBlock
                                         onFailure:(void(^)(NSError *error))failureBlock;
+
++ (instancetype)convertAndProcessRawFile:(NSString *)rawFilePath
+                              onProgress:(void(^)(double progress))progressBlock
+                               onSuccess:(void(^)(NSURL *resultFile))successBlock
+                               onFailure:(void(^)(NSError *error))failureBlock;
 
 @end
 
@@ -107,6 +136,7 @@ Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize
 + (NSString *)testAccompFileName;
 + (NSString *)testSourceFilePathForFile:(NSString *)testFileName;
 + (NSString *)tempFilePathForFile:(NSString *)fileName;
++ (NSString *)tempFilePathForFile:(NSString *)fileName extension:(NSString *)extension;
 + (NSString *)testResultPathForFile:(NSString *)fileName;
 + (void)deleteTempFilesForFile:(NSString *)fileName;
 

@@ -25,6 +25,7 @@
                                        withAudioBufferSize:DEFAULT_BUFFERSIZE
                                                   compress:YES
                                                     reverb:YES
+                                               forceStereo:NO
                                            progressHandler:progressBlock
                                          completionHandler:^(NSURL *fileURL, NSError *error) {
                                              
@@ -35,6 +36,7 @@
                                                  Float32 normConst = processor.normalizeConstant;
                                                  processor = nil;
                                                  [NSThread sleepForTimeInterval:0.2];
+                                                 
                                                  [[NSOperationQueue mainQueue]addOperationWithBlock:^{
                                                      [[NSOperationQueue new]addOperationWithBlock:^{
                                                          
@@ -59,6 +61,29 @@
         
         [NSThread sleepForTimeInterval:0.1];
         [processor start];
+    }];
+    
+    return processor;
+}
+
++ (instancetype)convertAndProcessRawFile:(NSString *)rawFilePath
+                              onProgress:(void(^)(double progress))progressBlock
+                               onSuccess:(void(^)(NSURL *resultFile))successBlock
+                               onFailure:(void(^)(NSError *error))failureBlock
+{
+    __block OfflineAudioFileProcessor *processor = nil;
+    [[NSOperationQueue new]addOperationWithBlock:^{
+        [OfflineAudioFileProcessor convertRaw2Wav:rawFilePath completion:^(NSString *wavFilePath, NSError *error) {
+            if (error) {
+                return failureBlock(error);
+            }
+            [[NSOperationQueue mainQueue]addOperationWithBlock:^{
+                processor = [OfflineAudioFileProcessor doDefaultProcessingWithSourceFile:wavFilePath
+                                                                              onProgress:progressBlock
+                                                                               onSuccess:successBlock
+                                                                               onFailure:failureBlock];
+            }];
+        }];
     }];
     
     return processor;
