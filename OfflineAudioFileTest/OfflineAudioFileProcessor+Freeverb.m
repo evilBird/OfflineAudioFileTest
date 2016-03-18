@@ -269,13 +269,29 @@ OSStatus freeverb_perform(__unsafe_unretained OfflineAudioFileProcessor *x, Audi
 OSStatus freeverb_perf8(__unsafe_unretained OfflineAudioFileProcessor *x, AudioBufferList *buffer, UInt32 bufferSize)
 {
     UInt32 numChannels = buffer->mNumberBuffers;
-    UInt32 idx1 = 0;
-    UInt32 idx2 = ( numChannels > 1 ) ? ( 1 ) : ( 0 );
-    bool mono_mix = ( idx2 == 0 ) ? ( true ) : ( false );
-    Float32 *in1 = (Float32 *)(buffer->mBuffers[idx1].mData);
-    Float32 *in2 = (Float32 *)(buffer->mBuffers[idx2].mData);
-    Float32 *out1 = (Float32 *)(buffer->mBuffers[idx1].mData);
-    Float32 *out2 = (Float32 *)(buffer->mBuffers[idx2].mData);
+    bool mono_mix = ( numChannels == 1 ) ? ( true ) : ( false );
+    bool stereo_mix = ( numChannels == 2 ) ? ( true ) : ( false );
+    Float32 *in1,*in2,*out1,*out2;
+    
+    if (mono_mix) {
+    
+        in1 = (Float32 *)(buffer->mBuffers[0].mData);
+        in2 = (Float32 *)(buffer->mBuffers[0].mData);
+        out1 = (Float32 *)(buffer->mBuffers[0].mData);
+        out2 = (Float32 *)(buffer->mBuffers[0].mData);
+        
+    }else if (stereo_mix) {
+        
+        in1 = (Float32 *)(buffer->mBuffers[0].mData);
+        in2 = (Float32 *)(buffer->mBuffers[1].mData);
+        out1 = (Float32 *)(buffer->mBuffers[0].mData);
+        out2 = (Float32 *)(buffer->mBuffers[1].mData);
+        
+    }else{
+        
+        return (OSStatus)(-1);
+    }
+    
     
     SInt32 n = bufferSize;
     SInt32 i;
@@ -666,11 +682,11 @@ void freeverb_setup(__unsafe_unretained OfflineAudioFileProcessor *x, UInt32 sam
 - (AudioProcessingBlock)mediumReverbProcessingBlock
 {
     freeverb_setup(self, (UInt32)self.sourceFormat.sampleRate);
-    freeverb_setwet(self, 0.25);
-    freeverb_setdry(self, 0.75);
-    freeverb_setroomsize(self, 0.4);
-    freeverb_setwidth(self, 0.7);
-    freeverb_setdamp(self, 0.6);
+    freeverb_setwet(self, 0.35);
+    freeverb_setdry(self, 0.65);
+    freeverb_setroomsize(self, 0.5);
+    freeverb_setwidth(self, 0.8);
+    freeverb_setdamp(self, 0.4);
     __weak OfflineAudioFileProcessor *weakself = self;
     AudioProcessingBlock freeverbBlock = ^(AudioBufferList *buffer, AVAudioFrameCount bufferSize){
         return dsp_do_freeverb(weakself, buffer, bufferSize);
