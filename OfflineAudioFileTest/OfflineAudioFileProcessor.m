@@ -8,9 +8,12 @@
 
 #import "OfflineAudioFileProcessor.h"
 #import "OfflineAudioFileProcessor+Functions.h"
+#import "OfflineAudioFileProcessor+Analysis.h"
 #import "NSObject+AudioSessionManager.h"
 
 @interface OfflineAudioFileProcessor () {
+    
+    bool kIsReadOnlyFlag;
 }
 
 @property (nonatomic,strong,readwrite)                  NSString                           *fileName;
@@ -34,7 +37,6 @@
 @property (nonatomic,readwrite,getter=isPaused)         bool                               paused;
 @property (nonatomic,readwrite,getter=isDone)           bool                               done;
 @property (nonatomic,readwrite,getter=isCancelled)      bool                               cancelled;
-
 @property (nonatomic,strong,readwrite)                  NSError                            *error;
 
 @property (nonatomic,copy)                              AudioProcessingProgressBlock        myProgressBlock;
@@ -138,15 +140,19 @@
     self.myCompletionBlock = completionBlock;
 }
 
-- (instancetype)initWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize
-{
-    return [self initWithSourceFile:sourceFilePath maxBufferSize:maxBufferSize];
-}
-
 - (void)initializeProcessorWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize
 {
     self.sourceFilePath = sourceFilePath;
     self.maxBufferSize = maxBufferSize;
+    kIsReadOnlyFlag = false;
+    [self defaultInit];
+}
+
+- (void)initializeAnalyzerWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize
+{
+    self.sourceFilePath = sourceFilePath;
+    self.maxBufferSize = maxBufferSize;
+    kIsReadOnlyFlag = true;
     [self defaultInit];
 }
 
@@ -158,6 +164,7 @@
     _cancelled = NO;
     _resultAudioFile = nil;
     _tempResultAudioFile = nil;
+    _tempResultFilePath = nil;
     _progress = 0.0;
     _maxMeasuredOutputMagnitude = 0.0;
     _fileName = [_sourceFilePath lastPathComponent];
@@ -185,6 +192,10 @@
     self.sourceLength = (AVAudioFrameCount)(self.sourceAudioFile.length);
     self.sourcePosition = 0;
     self.tempResultFilePath = [OfflineAudioFileProcessor tempFilePathForFile:self.fileName];
+    if ( kIsReadOnlyFlag == true ){
+        return YES;
+    }
+    
     self.targetFormat = self.sourceFormat;
     self.tempResultAudioFile = [self audioFileForWritingToPath:self.tempResultFilePath processingFormat:self.targetFormat error:&err];
     
@@ -363,6 +374,7 @@
     return YES;
 }
 
+
 - (void)readFromFile:(AVAudioFile *)sourceFile
     processWithBlock:(AudioProcessingBlock)processingBlock
       andWriteToFile:(AVAudioFile *)targetFile
@@ -430,7 +442,11 @@
     NSError *err = nil;
     Float32 maxMagnitude = self.maxMeasuredOutputMagnitude;
     
-    [self readFromFile:self.sourceAudioFile processWithBlock:self.myProcessingBlock andWriteToFile:self.tempResultAudioFile progressBlock:self.myProgressBlock maxMagnitude:&maxMagnitude error:&err];
+    if (kIsReadOnlyFlag == true) {
+        [self readFromAndAnalyzeFile:self.sourceAudioFile progressBlock:self.myProgressBlock error:&err];
+    }else{
+        [self readFromFile:self.sourceAudioFile processWithBlock:self.myProcessingBlock andWriteToFile:self.tempResultAudioFile progressBlock:self.myProgressBlock maxMagnitude:&maxMagnitude error:&err];
+    }
     
     if (err) {
         return [self finishWithError:err];
@@ -451,6 +467,11 @@
         self.maxAllowedPerChannelMagnitude = 0.99/(Float32)(self.targetFormat.channelCount);
         self.normalizeConstant = self.maxAllowedPerChannelMagnitude/self.maxMeasuredOutputMagnitude;
         NSLog(@"NORMALIZE CONSTANT: %f",self.normalizeConstant);
+    }
+    
+    if (kIsReadOnlyFlag == true) {
+        [self finishWithResult:nil];
+        return;
     }
 
     self.resultAudioFile = [[AVAudioFile alloc]initForReading:self.tempResultAudioFile.url error:&err];

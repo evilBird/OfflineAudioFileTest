@@ -12,7 +12,6 @@
 #import "NSObject+AudioSessionManager.h"
 
 typedef OSStatus (^AudioProcessingBlock)(AudioBufferList *buffer, AVAudioFrameCount bufferSize);
-typedef OSStatus (^AudioAnalysisBlock)(AudioBufferList *buffer, AVAudioFrameCount bufferSize);
 typedef void (^AudioProcessingProgressBlock)(double progress);
 typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error);
 
@@ -67,8 +66,9 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
                progressHandler:(void(^)(double progress))progressHandler
              completionHandler:(void(^)(NSURL *fileURL, NSError *error))completionHandler;
 
-- (instancetype)initWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize;
+
 - (void)initializeProcessorWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize;
+- (void)initializeAnalyzerWithSourceFile:(NSString *)sourceFilePath maxBufferSize:(NSUInteger)maxBufferSize;
 
 - (void)setProgressBlock:(void(^)(double progress))progressBlock;
 - (void)setProcessingBlock:(OSStatus (^)(AudioBufferList *buffer, AVAudioFrameCount bufferSize))processingBlock;

@@ -34,6 +34,7 @@
 		F2E60A3A1C90BABF00A58227 /* faure_sicilienne_violin.48o.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2DF1C8E48D500E86A5F /* faure_sicilienne_violin.48o.wav */; };
 		F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
 		F2E60A3D1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */; };
+		F2E8ACD21C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,8 @@
 		F2E4A2E31C8E537200E86A5F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F2E60A341C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Freeverb.m"; sourceTree = "<group>"; };
 		F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+ConvenienceMethods.m"; sourceTree = "<group>"; };
+		F2E8ACD01C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OfflineAudioFileProcessor+Analysis.h"; sourceTree = "<group>"; };
+		F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Analysis.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +115,8 @@
 				F2A556DA1C9C74F800F586C6 /* OfflineAudioFileProcessing.h */,
 				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
 				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F2E8ACD01C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.h */,
+				F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */,
 				F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */,
 				F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */,
 				F2C9208E1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.h */,
@@ -316,6 +321,7 @@
 				F212471C1C8F53C100C54911 /* AudioSpectrumProcessor.m in Sources */,
 				F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */,
 				F2E4A2B51C8E482500E86A5F /* main.m in Sources */,
+				F2E8ACD21C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m in Sources */,
 				F212472B1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m in Sources */,
 				F21247271C8F731700C54911 /* OfflineAudioFileProcessor+Test.m in Sources */,
 			);

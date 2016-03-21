@@ -11,9 +11,11 @@
 #import "OfflineAudioFileProcessor.h"
 #import "AudioSpectrumProcessor.h"
 #import "NSObject+AudioSessionManager.h"
+#import "OfflineAudioFileProcessor+Analysis.h"
 
 @interface ViewController (){
     AVAudioFrameCount kBufferSize;
+    NSMutableDictionary *vUserInfoDictionary;
 }
 
 @property (nonatomic,strong)                        OfflineAudioFileProcessor       *myProcessor;
@@ -37,19 +39,59 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     kBufferSize = 1024;
-    self.myRawFilePath = [ViewController hugeRawAccompFilePath];
-    [OfflineAudioFileProcessor deleteTempFilesForFile:[self.myRawFilePath lastPathComponent]];
+    //[OfflineAudioFileProcessor deleteTempFilesForFile:[self.myRawFilePath lastPathComponent]];
     [self defaultUISetup];
-    [self startPlaybackAudioSessionError:nil];
+    //[self startPlaybackAudioSessionError:nil];
     
     // Do any additional setup after loading the view, typically from a nib.
+}
+
+#define ANALYZE_INSTEAD 1
+
+- (void)startAnalyzing
+{
+    vUserInfoDictionary = [NSMutableDictionary dictionary];
+    NSString *kFramesRead = @"frames read";
+    NSString *kMaxRMS = @"max RMS";
+    NSString *kTime = @"time (s)";
+    [vUserInfoDictionary setObject:[NSMutableArray array] forKey:kFramesRead];
+    [vUserInfoDictionary setObject:[NSMutableArray array] forKey:kMaxRMS];
+    [vUserInfoDictionary setObject:[NSMutableArray array] forKey:kTime];
+    self.myRawFilePath = [ViewController soloViolinFilePath];
+    __block UInt32 vNumFramesRead = 0;
+    __block Float32 vTime = 0.0;
+    self.myProcessor = [OfflineAudioFileProcessor analyzeFile:self.myRawFilePath maxBlockSize:kBufferSize analysisBlock:^OSStatus(AudioBufferList *buffer, UInt32 bufferSize, UInt32 framesRead, UInt32 framesRemaining, UInt32 sampleRate, void *userInfo) {
+        Float32 peakRMS = GetPeakRMS(buffer, sampleRate, bufferSize, bufferSize/4);
+        [vUserInfoDictionary[kFramesRead] addObject:@(vNumFramesRead)];
+        [vUserInfoDictionary[kMaxRMS] addObject:@(peakRMS)];
+        [vUserInfoDictionary[kTime] addObject:@(vTime)];
+        vNumFramesRead += bufferSize;
+        vTime +=  ((Float32)kBufferSize/sampleRate);
+        return 0;
+    } userInfo:(__bridge void *)(vUserInfoDictionary) onProgress:^(double progress) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateProgress:progress];
+        });
+    } onSuccess:^(NSURL *resultFile) {
+        NSLog(@"SUCCESS: %@",resultFile.path);
+        NSLog(@"RESULTS: %@",vUserInfoDictionary);
+    } onFailure:^(NSError *error) {
+        NSLog(@"FAILURE: %@",error);
+    }];
 }
 
 - (void)startProcessing
 {
     __weak ViewController *weakself = self;
     [self processorWillBeginProcessing];
-    self.myProcessor = [OfflineAudioFileProcessor __convertAndProcessRawFile:self.myRawFilePath
+    
+    if (ANALYZE_INSTEAD) {
+        [self startAnalyzing];
+        return;
+    }
+    self.myRawFilePath = [ViewController hugeRawAccompFilePath];
+
+    self.myProcessor = [OfflineAudioFileProcessor convertAndProcessRawFile:self.myRawFilePath
                                                                 onProgress:^(double progress) {
                                                                     dispatch_async(dispatch_get_main_queue(), ^{
                                                                         [weakself.progressLabel setText:[NSString stringWithFormat:@"Processing...progress: %.2f",progress]];
@@ -63,7 +105,7 @@
                                                                     dispatch_async(dispatch_get_main_queue(), ^{
                                                                         [weakself processorDidFailWithError:error];
                                                                     });
-                     
+                                                                    
                                                                 }];
 }
 
@@ -133,13 +175,18 @@
     self.crossFadeSlider.hidden = YES;
     self.pauseButton.hidden = NO;
 }
-
+- (void)updateProgress:(double)progress
+                       {
+                           
+                       }
 - (void)processorDidFailWithError:(NSError *)error
 {
     self.progressLabel.text = @"ERROR";
     NSLog(@"ERROR: %@",error);
     [self defaultUISetup];
 }
+                       
+                       
 
 - (void)processorDidSucceedWithResult:(NSURL *)resultFile
 {
@@ -155,6 +202,7 @@
     self.progressLabel.text = @"SUCCESS! PLAYING RESULT.";
 }
 
+        
 
 #pragma mark - Audio Playback Helpers
 
@@ -247,6 +295,14 @@
 
 
 #pragma mark - Helpers
+
++ (NSString *)soloViolinFilePath
+{
+    NSString *rawSoloFileName = @"faure_sicilienne_violin.48k.wav";
+    NSString *path = [[NSBundle mainBundle]pathForResource:rawSoloFileName ofType:nil];
+    NSParameterAssert(path);
+    return path;
+}
 
 + (NSString *)rawSoloFilePath
 {
