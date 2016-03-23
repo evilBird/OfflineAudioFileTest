@@ -84,14 +84,6 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 
 @interface OfflineAudioFileProcessor (Compressor)
 
-void print_samples(Float32 *samples, UInt32 numSamples, const char *tag);
-
-Float32 GetPeakRMS(AudioBufferList *buffer, UInt32 sampleRate, UInt32 bufferSize, UInt32 windowSize);
-
-Float32 GetBufferMaximumMagnitude(AudioBufferList *bufferList, UInt32 bufferSize);
-
-Float32* GenerateFloatBuffer(UInt32 bufferLength, Float32 initalValue);
-
 - (AudioProcessingBlock)vectorCompressionProcessingBlock;
 
 @end

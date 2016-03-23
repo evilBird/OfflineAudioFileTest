@@ -26,6 +26,31 @@
     [super tearDown];
 }
 
+
+- (void)testFunctions
+{
+    
+
+
+    
+    /*
+    Float32 err1 = interval_duple_likelihood(101.0, 53.0);
+    Float32 err2 = interval_duple_likelihood(102.0, 24.0);
+    Float32 err3 = interval_duple_likelihood(99.0, 12.5);
+    Float32 err4 = interval_duple_likelihood(50.0, 100.0);
+    Float32 err5 = interval_duple_likelihood(25.0, 100.0);
+    Float32 err6 = interval_duple_likelihood(14.5, 100.0);
+    
+    Float32 err7 = interval_triple_likelihood(100.0, 33.3);
+    Float32 err8 = interval_triple_likelihood(33.3, 100.0);
+    Float32 err9 = interval_triple_likelihood(66.6, 33.3);
+    Float32 err10 = interval_triple_likelihood(103.0, 35.0);
+    Float32 err11 = interval_triple_likelihood(32.0, 98.0);
+     */
+    
+}
+
+
 - (void)testExample {
     
     NSString *path = [[NSBundle bundleForClass:[self class]]pathForResource:@"faure_sicilienne_violin.48o" ofType:@"wav"];

@@ -6,7 +6,7 @@
 //  Copyright © 2016 birdSound. All rights reserved.
 //
 
-#import "OfflineAudioFileProcessor.h"
+#import "OfflineAudioFileProcessor+Functions.h"
 
 @implementation OfflineAudioFileProcessor (Normalizer)
 
