@@ -53,9 +53,10 @@
 
 - (void)startAnalyzing
 {
-    NSString *filePath = [ViewController accompFilePath];
+    NSString *filePath = [ViewController doIWannaKnowFilePath];
     __weak ViewController *weakself = self;
-    [OfflineAudioFileProcessor detectBPMOfFile:filePath maxBlockSize:kBufferSize onProgress:^(double progress) {
+    
+    self.myProcessor = [OfflineAudioFileProcessor detectBPMOfFile:filePath allowedRange:NSRangeFromString(@"30, 180") onProgress:^(double progress) {
         dispatch_async(dispatch_get_main_queue(), ^{
             weakself.progressLabel.text = [NSString stringWithFormat:@"DETECT BPM PROGRESS: %.2f",progress];
         });
@@ -286,6 +287,19 @@
 
 
 #pragma mark - Helpers
+
++ (NSString *)floriDadaFilePath
+{
+    NSString *fileName = @"FloriDada.wav";
+    return [ViewController bundlePathForFile:fileName];
+}
+
++ (NSString *)doIWannaKnowFilePath
+{
+    NSString *fileName = @"Do I Wanna Know.wav";
+    return [ViewController bundlePathForFile:fileName];
+}
+
 
 + (NSString *)americanSteelFilePath
 {

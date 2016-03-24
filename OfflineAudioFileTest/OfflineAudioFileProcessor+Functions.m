@@ -232,4 +232,104 @@ Float32 GetBufferMaximumMagnitude(AudioBufferList *bufferList, UInt32 bufferSize
     return myMaxVal;
 }
 
+Float32 interval_triple_likelihood(Float32 value1, Float32 value2)
+{
+    Float32 num,den;
+    num = ( value1 > value2 ) ? ( value1 ) : ( value2 );
+    den = ( value1 > value2 ) ? ( value2 ) : ( value1 );
+    Float32 logRatio = log2f(num/den);
+    Float32 triple_error = fabsf(logRatio)-log2f(3.0);
+    Float32 integral_error = fabsf(triple_error-roundf(triple_error));
+    return (1.0 - integral_error);
+}
+
+Float32 compare_beats_as_duples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio)
+{
+    if (beat1_length <= 0.0 || beat2_length <= 0.0) return 1.0;
+    if (beat1_length == beat2_length ) return 0.0;
+    
+    BOOL beat1_is_longer = ( beat1_length > beat2_length );
+    Float32 length_ratio;
+    
+    if (beat1_is_longer){
+        length_ratio = beat1_length/beat2_length;
+    }else{
+        length_ratio = beat2_length/beat1_length;
+    }
+    
+    Float32 duple_ratio = log2f(length_ratio) - log2f(2.0) + 3.0;
+    
+    Float32 my_beat_ratio = ( beat1_is_longer ) ? ( duple_ratio ) : ( 1.0/duple_ratio );
+    
+    if (beat_ratio) {
+        *beat_ratio = my_beat_ratio;
+    }
+    
+    Float32 error = duple_ratio-roundf(duple_ratio);
+    
+    return error;
+}
+
+Float32 compare_beats_as_tuples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio)
+{
+    if (beat1_length <= 0.0 || beat2_length <= 0.0) return 1.0;
+    if (beat1_length == beat2_length ) return 0.0;
+    
+    BOOL beat1_is_longer = ( beat1_length > beat2_length );
+    Float32 length_ratio;
+    
+    if (beat1_is_longer){
+        length_ratio = beat1_length/beat2_length;
+    }else{
+        length_ratio = beat2_length/beat1_length;
+    }
+    
+    Float32 tuple_ratio = log2f(length_ratio) - log2f(3.0) + 3.0;
+    Float32 my_beat_ratio = ( beat1_is_longer ) ? ( tuple_ratio ) : ( 1.0/tuple_ratio );
+    
+    if (beat_ratio) {
+        *beat_ratio = my_beat_ratio;
+    }
+    
+    Float32 error = tuple_ratio-roundf(tuple_ratio);
+    return error;
+}
+
+Float32 interval_duple_likelihood(Float32 value1, Float32 value2)
+{
+    Float32 num,den;
+    num = ( value1 > value2 ) ? ( value1 ) : ( value2 );
+    den = ( value1 > value2 ) ? ( value2 ) : ( value1 );
+    Float32 logRatio = log2f(num/den);
+    Float32 duple_error = fabsf(logRatio)-log2f(2.0);
+    Float32 integral_error = fabsf(duple_error-roundf(duple_error));
+    return (1.0 - integral_error);
+}
+
+Float32 weight_value_in_range(Float32 value, Float32 range_min, Float32 range_max, Float32 bias)
+{
+    Float32 range = range_max-range_min;
+    Float32 norm_interval = (value-range_min)/range;
+    Float32 ci = norm_interval*M_PI+(M_PI*(0.5+bias));
+    Float32 cv = cosf(ci);
+    Float32 cv2 = ((cv * 0.5)+0.5);
+    return (1.0-cv2);
+}
+
+Float32 weight_for_value_in_range(Float32 value, Float32 range_min, Float32 range_max)
+{
+    // this is also vector optimized
+    
+    if (value < range_min || value > range_max) {
+        return 0.0;
+    }
+    
+    Float32 two_pi = M_PI*2.0;
+    Float32 range = range_max-range_min;
+    Float32 w = two_pi/range;
+    Float32 n = (value - range_min);
+    Float32 result = (0.5 - 0.5 * cos(w * n));
+    return result;
+}
+
 @end

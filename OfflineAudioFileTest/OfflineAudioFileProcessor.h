@@ -93,7 +93,6 @@ typedef void (^AudioProcessingCompletionBlock)(NSURL *resultFile, NSError *error
 - (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant;
 - (AudioProcessingBlock)rampProcessingBlockWithFadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs;
 - (AudioProcessingBlock)postProcessingBlockWithNormalizingConstant:(Float32)normConstant fadeInRampTime:(Float32)fadeInSecs fadeOutRampTime:(Float32)fadeOutSecs;
-
 - (AudioProcessingBlock)normalizeProcessingBlockWithConstant:(Float32)normConstant fadeInDuration:(Float32)fadeInSecs fadeOutDuration:(Float32)fadeOutSecs;
 
 @end

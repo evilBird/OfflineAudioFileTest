@@ -42,4 +42,12 @@ void ClearFloatBuffer(Float32 *floatBuffer, UInt32 bufferSize);
 
 Float32* GetFloatBuffer(UInt32 bufferLength);
 
+Float32 interval_triple_likelihood(Float32 value1, Float32 value2);
+Float32 interval_duple_likelihood(Float32 value1, Float32 value2);
+Float32 weight_value_in_range(Float32 value, Float32 range_min, Float32 range_max, Float32 bias);
+Float32 weight_for_value_in_range(Float32 value, Float32 range_min, Float32 range_max);
+
+Float32 compare_beats_as_duples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio);
+Float32 compare_beats_as_tuples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio);
+
 @end

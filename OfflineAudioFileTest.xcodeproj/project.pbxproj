@@ -15,6 +15,8 @@
 		F2A556DD1C9C789000F586C6 /* NSObject+AudioSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A556DC1C9C789000F586C6 /* NSObject+AudioSessionManager.m */; };
 		F2A556DF1C9C8E2A00F586C6 /* violin_test_file.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2A556DE1C9C8E2A00F586C6 /* violin_test_file.wav */; };
 		F2C31CF61CA1F6BA00F127AE /* Got a Backbeat.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */; };
+		F2C31CF91CA2460700F127AE /* Do I Wanna Know.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF71CA2460700F127AE /* Do I Wanna Know.wav */; };
+		F2C31CFA1CA2460700F127AE /* FloriDada.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF81CA2460700F127AE /* FloriDada.wav */; };
 		F2C920901C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m in Sources */ = {isa = PBXBuildFile; fileRef = F2C9208F1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m */; };
 		F2C920931C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m in Sources */ = {isa = PBXBuildFile; fileRef = F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */; };
 		F2C920961C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k in Resources */ = {isa = PBXBuildFile; fileRef = F2C920941C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k */; };
@@ -61,6 +63,8 @@
 		F2A556DC1C9C789000F586C6 /* NSObject+AudioSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AudioSessionManager.m"; sourceTree = "<group>"; };
 		F2A556DE1C9C8E2A00F586C6 /* violin_test_file.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = violin_test_file.wav; sourceTree = "<group>"; };
 		F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Got a Backbeat.wav"; sourceTree = "<group>"; };
+		F2C31CF71CA2460700F127AE /* Do I Wanna Know.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Do I Wanna Know.wav"; sourceTree = "<group>"; };
+		F2C31CF81CA2460700F127AE /* FloriDada.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FloriDada.wav; sourceTree = "<group>"; };
 		F2C9208E1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OfflineAudioFileProcessor+Functions.h"; sourceTree = "<group>"; };
 		F2C9208F1C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Functions.m"; sourceTree = "<group>"; };
 		F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Raw2Wav.m"; sourceTree = "<group>"; };
@@ -171,6 +175,8 @@
 				F2E4A2B71C8E482500E86A5F /* AppDelegate.m */,
 				F2E4A2B91C8E482500E86A5F /* ViewController.h */,
 				F2E4A2BA1C8E482500E86A5F /* ViewController.m */,
+				F2C31CF71CA2460700F127AE /* Do I Wanna Know.wav */,
+				F2C31CF81CA2460700F127AE /* FloriDada.wav */,
 				F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */,
 				F2E4A2BC1C8E482500E86A5F /* Main.storyboard */,
 				F2E4A2BF1C8E482500E86A5F /* Assets.xcassets */,
@@ -293,7 +299,9 @@
 				F2E4A2C01C8E482500E86A5F /* Assets.xcassets in Resources */,
 				F2E4A2BE1C8E482500E86A5F /* Main.storyboard in Resources */,
 				F2C920961C9B6D2E00ED7A20 /* queen_bohemian_rhapsody.000.48k in Resources */,
+				F2C31CFA1CA2460700F127AE /* FloriDada.wav in Resources */,
 				F2A556DF1C9C8E2A00F586C6 /* violin_test_file.wav in Resources */,
+				F2C31CF91CA2460700F127AE /* Do I Wanna Know.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

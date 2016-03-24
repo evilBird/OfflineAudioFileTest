@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
+#import "OfflineAudioFileProcessor+Functions.h"
 
 @interface OfflineAudioFileTestTests : XCTestCase
 
@@ -26,30 +27,104 @@
     [super tearDown];
 }
 
-
-- (void)testFunctions
+- (void)doComparisonBeat1:(Float32)beat1_length beat2:(Float32)beat2_length
 {
-    
-
-
-    
-    /*
-    Float32 err1 = interval_duple_likelihood(101.0, 53.0);
-    Float32 err2 = interval_duple_likelihood(102.0, 24.0);
-    Float32 err3 = interval_duple_likelihood(99.0, 12.5);
-    Float32 err4 = interval_duple_likelihood(50.0, 100.0);
-    Float32 err5 = interval_duple_likelihood(25.0, 100.0);
-    Float32 err6 = interval_duple_likelihood(14.5, 100.0);
-    
-    Float32 err7 = interval_triple_likelihood(100.0, 33.3);
-    Float32 err8 = interval_triple_likelihood(33.3, 100.0);
-    Float32 err9 = interval_triple_likelihood(66.6, 33.3);
-    Float32 err10 = interval_triple_likelihood(103.0, 35.0);
-    Float32 err11 = interval_triple_likelihood(32.0, 98.0);
-     */
-    
+    Float32 duple_ratio;
+    Float32 duple_error = compare_beats_as_duples_get_error(beat1_length, beat2_length, &duple_ratio);
+    Float32 tuple_ratio;
+    Float32 tuple_error = compare_beats_as_tuples_get_error(beat1_length, beat2_length, &tuple_ratio);
+    NSLog(@"\n\nComparison of Beat 1 ( %.3fs ) & Beat 2 ( %.3fs ): e(duple) = %.5f, r(duple) = %.3f, e(tuple) = %.5f, r(tuple) = %.3f\n\n",beat1_length,beat2_length,duple_error,duple_ratio,tuple_error,tuple_ratio);
 }
 
+- (void)compareBeat:(Float32)beat1_length toBeat:(Float32)beat2_length
+{
+    [self doComparisonBeat1:beat1_length beat2:beat2_length];
+    [self doComparisonBeat1:beat2_length beat2:beat1_length];
+}
+
+- (Float32 *)noteLengthsWithTempo:(Float32)tempo
+{
+    Float32 kTempo = tempo;
+    Float32 kSecondsPerMinute = 60.0;
+    Float32 kQuarternote = kSecondsPerMinute*1000.0/kTempo;
+    
+    Float32 kDottedQuarterNote = kQuarternote * 1.5;
+    Float32 kHalfNote = kQuarternote*2.;
+    Float32 kDottedHalfNote = kHalfNote*1.5;
+    Float32 kWholeNote = kHalfNote*2.;
+    Float32 kEighthNote = kQuarternote/2.;
+    Float32 kDottedEighthNote = kEighthNote * 1.5;
+    Float32 kSixteenthNote = kEighthNote/2.;
+    Float32 kDottedSixteenthNote = kSixteenthNote * 1.5;
+    Float32 kThirtySecondNote = kSixteenthNote/2.;
+    Float32 kDottedThirtySecondNote = kThirtySecondNote * 1.5;
+    Float32 kTriplet = kWholeNote/3.;
+    Float32 kSixthNote = kHalfNote/3.;
+    Float32 kTwelthNote = kQuarternote/3.;
+    Float32 kTwentyFourthNote = kEighthNote/3.;
+    
+    Float32 *noteLengths = (Float32 *)malloc(sizeof(Float32) * 16);
+    
+    noteLengths[0] = kThirtySecondNote;
+    noteLengths[1] = kDottedThirtySecondNote;
+    noteLengths[2] = kTwentyFourthNote;
+    noteLengths[3] = kSixteenthNote;
+    noteLengths[4] = kDottedSixteenthNote;
+    noteLengths[5] = kTwelthNote;
+    noteLengths[6] = kEighthNote;
+    noteLengths[7] = kDottedEighthNote;
+    noteLengths[8] = kSixthNote;
+    noteLengths[9] = kQuarternote;
+    noteLengths[10] = kDottedQuarterNote;
+    noteLengths[11] = kTriplet;
+    noteLengths[12] = kHalfNote;
+    noteLengths[13] = kDottedHalfNote;
+    noteLengths[14] = kWholeNote;
+    
+    return noteLengths;
+}
+
+- (Float32 *)jitterBeats:(Float32 *)beats withTempo:(Float32)tempo amount:(Float32)amount count:(UInt32)count
+{
+    Float32 secsPerBeat = 60000.0/tempo;
+    Float32 jitterMax = secsPerBeat*amount;
+    Float32 jitterMin = -jitterMax;
+    Float32 jitterRange = jitterMax-jitterMin;
+    
+    for (UInt32 i = 0; i < count; i ++) {
+        Float32 norm = (Float32)arc4random_uniform(1000.0)*0.001;
+        Float32 jitter = jitterMin + (norm * jitterRange);
+        beats[i] += jitter;
+    }
+    
+    return beats;
+}
+
+- (void)testBeatComparisons
+{
+    Float32 kTempo = 120.0;
+    Float32 kSecondsPerMinute = 60.0;
+    Float32 kQuarternote = kSecondsPerMinute/kTempo;
+    Float32 kDottedQuarterNote = kQuarternote * 1.5;
+    Float32 kHalfNote = kQuarternote*2.;
+    Float32 kDottedHalfNote = kHalfNote*1.5;
+    Float32 kWholeNote = kHalfNote*2.;
+    Float32 kEighthNote = kQuarternote/2.;
+    Float32 kDottedEighthNote = kEighthNote * 1.5;
+    Float32 kSixteenthNote = kEighthNote/2.;
+    Float32 kDottedSixteenthNote = kSixteenthNote * 1.5;
+    Float32 kThirtySecondNote = kSixteenthNote/2.;
+    Float32 kDottedThirtySecondNote = kThirtySecondNote * 1.5;
+    Float32 kTriplet = kWholeNote/3.;
+    Float32 kSixthNote = kHalfNote/3.;
+    Float32 kTwelthNote = kQuarternote/3.;
+    Float32 kTwentyFourthNote = kEighthNote/3.;
+    
+    [self compareBeat:kQuarternote toBeat:kWholeNote];
+    [self compareBeat:kDottedQuarterNote toBeat:kTriplet];
+    [self compareBeat:kSixteenthNote toBeat:kQuarternote];
+    [self compareBeat:kTriplet toBeat:kWholeNote];
+}
 
 - (void)testExample {
     
