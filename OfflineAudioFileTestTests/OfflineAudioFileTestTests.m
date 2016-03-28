@@ -10,7 +10,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
 #import "OfflineAudioFileProcessor+Functions.h"
-
+#import "OfflineAudioFileProcessor+Analysis.h"
+#import "TempoDetectionTree.h"
 @interface OfflineAudioFileTestTests : XCTestCase
 
 @end
@@ -27,6 +28,51 @@
     [super tearDown];
 }
 
+- (void)testTempoDetection
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"tempo will be detected"];
+    NSString *filePath = [self doIWannaKnowFilePath];
+    
+    [OfflineAudioFileProcessor detectBPMOfFile:filePath allowedRange:NSRangeFromString(@"30, 180") onProgress:nil onSuccess:^(Float32 detectedTempo) {
+        [expectation fulfill];
+        NSLog(@"SUCCES: %f",detectedTempo);
+    } onFailure:^(NSError *error) {
+        [expectation fulfill];
+        XCTFail(@"FAILED WITH ERROR: %@",error);
+    }];
+    
+    [self waitForExpectationsWithTimeout:180.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"FAILED WITH ERROR: %@",error);
+        }
+    }];
+}
+
+- (NSString *)floriDadaFilePath
+{
+    NSString *fileName = @"FloriDada.wav";
+    return [self bundlePathForFile:fileName];
+}
+
+- (NSString *)doIWannaKnowFilePath
+{
+    NSString *fileName = @"Do I Wanna Know.wav";
+    return [self bundlePathForFile:fileName];
+}
+
+- (NSString *)americanSteelFilePath
+{
+    NSString *fileName = @"Got a Backbeat.wav";
+    return [self bundlePathForFile:fileName];
+}
+
+- (NSString *)bundlePathForFile:(NSString *)fileName
+{
+    NSString *path = [[NSBundle mainBundle]pathForResource:fileName ofType:nil];
+    NSParameterAssert(path);
+    return path;
+}
+
 - (void)doComparisonBeat1:(Float32)beat1_length beat2:(Float32)beat2_length
 {
     Float32 duple_ratio;
@@ -39,7 +85,6 @@
 - (void)compareBeat:(Float32)beat1_length toBeat:(Float32)beat2_length
 {
     [self doComparisonBeat1:beat1_length beat2:beat2_length];
-    [self doComparisonBeat1:beat2_length beat2:beat1_length];
 }
 
 - (Float32 *)noteLengthsWithTempo:(Float32)tempo
@@ -102,28 +147,58 @@
 
 - (void)testBeatComparisons
 {
-    Float32 kTempo = 120.0;
-    Float32 kSecondsPerMinute = 60.0;
-    Float32 kQuarternote = kSecondsPerMinute/kTempo;
-    Float32 kDottedQuarterNote = kQuarternote * 1.5;
-    Float32 kHalfNote = kQuarternote*2.;
-    Float32 kDottedHalfNote = kHalfNote*1.5;
-    Float32 kWholeNote = kHalfNote*2.;
-    Float32 kEighthNote = kQuarternote/2.;
-    Float32 kDottedEighthNote = kEighthNote * 1.5;
-    Float32 kSixteenthNote = kEighthNote/2.;
-    Float32 kDottedSixteenthNote = kSixteenthNote * 1.5;
-    Float32 kThirtySecondNote = kSixteenthNote/2.;
-    Float32 kDottedThirtySecondNote = kThirtySecondNote * 1.5;
-    Float32 kTriplet = kWholeNote/3.;
-    Float32 kSixthNote = kHalfNote/3.;
-    Float32 kTwelthNote = kQuarternote/3.;
-    Float32 kTwentyFourthNote = kEighthNote/3.;
+    Float32 tolerance = 0.05;
+    TempoDetectionNode *node1 = [TempoDetectionNode new];
+    node1.tolerance = tolerance;
+    TempoDetectionNode *node2 = [TempoDetectionNode new];
+    node2.tolerance = tolerance;
+    TempoDetectionNode *node3 = [TempoDetectionNode new];
+    node3.tolerance = tolerance;
+    TempoDetectionNode *node4 = [TempoDetectionNode new];
+    node4.tolerance = tolerance;
+    TempoDetectionNode *node5 = [TempoDetectionNode new];
+    node5.tolerance = tolerance;
+    TempoDetectionNode *node6 = [TempoDetectionNode new];
+    node6.tolerance = tolerance;
+    TempoDetectionNode *node7 = [TempoDetectionNode new];
+    node7.tolerance = tolerance;
     
-    [self compareBeat:kQuarternote toBeat:kWholeNote];
-    [self compareBeat:kDottedQuarterNote toBeat:kTriplet];
-    [self compareBeat:kSixteenthNote toBeat:kQuarternote];
-    [self compareBeat:kTriplet toBeat:kWholeNote];
+    node1.interval = 0.10;
+    node2.interval = 0.025;
+    node3.interval = 0.05;
+    node4.interval = 0.033;
+    node5.interval = 0.0166;
+    node6.interval = 0.075;
+    node7.interval = 0.0666;
+    
+    BOOL result = NO;
+    
+    result = [node7 isDoubleTupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node6 isDottedDupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node2 isDupleOfNode:node1];
+    XCTAssert(result==NO);
+    result = [node3 isDupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node2 canBeDupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node4 isDupleOfNode:node1];
+    XCTAssert(result==NO);
+    result = [node4 isTupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node5 isTupleOfNode:node1];
+    XCTAssert(result==NO);
+    result = [node5 canBeTupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node6 canBeDottedDupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node6 isDupleOfNode:node1];
+    XCTAssert(result==NO);
+    result = [node7 canBeTupleOfNode:node1];
+    XCTAssert(result==YES);
+    result = [node7 isTupleOfNode:node1];
+    XCTAssert(result==NO);
 }
 
 - (void)testExample {

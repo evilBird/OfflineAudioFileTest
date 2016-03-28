@@ -8,6 +8,8 @@
 
 #import "OfflineAudioFileProcessor+Analysis.h"
 #import "OfflineAudioFileProcessor+Functions.h"
+#import "BeatInterval.h"
+#import "TempoDetectionTree.h"
 
 static NSString *kObsIndex          =           @"obs_index";
 static NSString *kStartTime         =           @"frame_start_time_s";
@@ -151,11 +153,10 @@ static NSString *kFreqWt            =           @"freq_wt";
                 prevPeakTime = peakTime;
                 
             }else{
-                
-                Float32 peakInterval = (peakTime - prevPeakTime);
-                
-                if (peakInterval > minInterval) {
+                Float32 theInterval = (peakTime - prevPeakTime);
+                if (theInterval > minInterval) {
                     NSMutableDictionary *myObs = anObs.mutableCopy;
+                    Float32 peakInterval = round_float_to_sig_digs(theInterval, 3);
                     myObs[kPeakInterval] = @(peakInterval);
                     myObs[kObsIndex] = @(idx);
                     [peaks addObject:myObs];
@@ -177,6 +178,140 @@ static NSString *kFreqWt            =           @"freq_wt";
     NSDictionary *peak = @{kPeakInterval:averageInterval,
                            kObsCount:occurenceCt};
     return peak;
+}
+
++ (NSArray *)sortedPeakLengths:(NSArray *)peaks ascending:(BOOL)ascending
+{
+    NSSortDescriptor *sortByLength = [NSSortDescriptor sortDescriptorWithKey:kPeakInterval ascending:ascending];
+    NSArray *sortedPeaks = [peaks sortedArrayUsingDescriptors:@[sortByLength]];
+    NSArray *peakLengths = [sortedPeaks valueForKey:kPeakInterval];
+    
+    return peakLengths;
+}
+
+static NSString *kRelatedKey = @"related";
+static NSString *kUnrelatedKey = @"un-related";
+static NSString *kRelatedEqualKey = @"related as equals";
+static NSString *kRelatedDupleKey = @"related as duples";
+static NSString *kRelatedTupleKey = @"related as tuples";
+static NSString *kDebuggingKey = @"debugging";
+
++ (void)doSomethingWithSortedPeaksLengths:(NSArray *)sortedPeakLengths
+{
+    NSArray *intervals = [OfflineAudioFileProcessor getAllIntervalsForPeaks:sortedPeakLengths];
+    NSArray *combinedIntervals = [BeatInterval combineBeatIntervals:intervals withMargin:0.01 tolerance:0.0125];
+    NSArray *recombined = [BeatInterval combineBeatIntervals:combinedIntervals withMargin:0.01 tolerance:0.025];
+    NSArray *sortedCombined = [recombined sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"percentExplainedByCombination" ascending:NO]]];
+    
+    
+}
+
++ (NSArray *)getAllIntervalsForPeaks:(NSArray *)peaks
+{
+    NSMutableArray *mutablePeaks = peaks.mutableCopy;
+    Float32 tolerance = 0.025;
+    __block NSMutableArray *allIntervals = [NSMutableArray array];
+    [mutablePeaks enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        __block NSUInteger thisIndex = idx;
+        NSNumber *thisPeak = (NSNumber *)obj;
+        __block BeatInterval *beatInterval = [BeatInterval beatIntervalWithSeconds:thisPeak.doubleValue];
+        Float32 thisInterval = thisPeak.floatValue;
+        [mutablePeaks enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            NSUInteger thatIndex = idx;
+            if (thatIndex != thisIndex){
+                NSNumber *thatPeak = (NSNumber *)obj;
+                Float32 thatInterval = thatPeak.floatValue;
+                if (fabsf(compare_beats_as_duples_get_error(thisInterval, thatInterval, NULL))<tolerance) {
+                    [beatInterval addExplainedIndex:thatIndex];
+                }else if (fabsf(compare_beats_as_tuples_get_error(thisInterval, thatInterval, NULL))<tolerance){
+                    [beatInterval addExplainedIndex:thatIndex];
+                }else{
+                    [beatInterval addUnexplainedIndex:thatIndex];
+                }
+            }
+        }];
+        
+        [allIntervals addObject:beatInterval];
+    }];
+    
+    return allIntervals;
+}
+
++ (NSDictionary *)getRelationshipsForPeakAtIndex:(NSUInteger)index inPeakLengthArray:(NSArray *)peakLengths debug:(BOOL)debug
+{
+    NSMutableArray *mutablePeakLengths = peakLengths.mutableCopy;
+    NSNumber *shortestPeak = mutablePeakLengths[index];
+    
+    NSMutableDictionary *relationships = [NSMutableDictionary dictionary];
+    relationships[kRelatedDupleKey] = [NSMutableDictionary dictionary];
+    relationships[kRelatedTupleKey] = [NSMutableDictionary dictionary];
+    relationships[kRelatedEqualKey] = [NSMutableArray array];
+    relationships[kRelatedKey]  =   [NSMutableArray array];
+    relationships[kUnrelatedKey] = [NSMutableArray array];
+    NSMutableString *debuggingString = ( debug ) ? ( [NSMutableString new] ) : ( nil );
+    Float32 baseLength = shortestPeak.floatValue;
+    Float32 tolerance = 0.025;
+    NSUInteger i = 0;
+    
+    for (NSNumber *aPeakLength in mutablePeakLengths) {
+        
+        if (i!=index) {
+            Float32 aLength = aPeakLength.floatValue;
+            Float32 dupleRatio;
+            Float32 dupleErr = compare_beats_as_duples_get_error(aLength, baseLength, &dupleRatio);
+            Float32 de = fabsf(dupleErr);
+            
+            Float32 tupleRatio;
+            Float32 tupleErr = compare_beats_as_tuples_get_error(baseLength, aLength, &tupleRatio);
+            Float32 te = fabsf(tupleErr);
+            
+            if ((de < tolerance && dupleRatio >=1.0) || (te < tolerance && tupleRatio>=1.0)){
+                
+                [relationships[kRelatedKey] addObject:aPeakLength];
+                
+                if (debuggingString) {
+                    
+                    if ((de < tolerance && dupleRatio == 1.0)||(te < tolerance && tupleRatio == 1.0))  {
+                        
+                        NSString *toAdd = [NSString stringWithFormat:@"\nEquals: %.3fs p(d)=%.3f p(t)=%.3f @1x",aLength,1.0-de,1.0-te];
+                        [debuggingString appendString:toAdd];
+                    }
+                    
+                    if (de < tolerance && dupleRatio >= 2.0) {
+                        
+                        NSString *toAdd = [NSString stringWithFormat:@"\nDuples: %.3fs p(d)=%.3f @ %.fx",aLength,1.0-de,dupleRatio];
+                        [debuggingString appendString:toAdd];
+                    }
+                    
+                    if (te < tolerance && tupleRatio >= 3.0) {
+                        
+                        NSString *toAdd = [NSString stringWithFormat:@"\nTuples: %.3fs p(t)=%.3f @%.fx",aLength,1.0-te,tupleRatio];
+                        [debuggingString appendString:toAdd];
+                    }
+                }
+            }else{
+                if (fabsf(dupleErr) >= tolerance && fabsf(tupleErr) >= tolerance ) {
+                    
+                    [relationships[kUnrelatedKey] addObject:aPeakLength];
+                    
+                    if (debuggingString) {
+                        NSString *toAdd = [NSString stringWithFormat:@"\nUnexplained: %.3fs p(d)=%.3f p(t)=%.3f",aLength,1.0-de,1.0-te];
+                        [debuggingString appendString:toAdd];
+                    }
+                    
+                }
+            }
+            
+        }
+    }
+    
+    if (debuggingString) {
+        relationships[kDebuggingKey] = [NSString stringWithString:debuggingString];
+    }
+    
+    return relationships;
+    
 }
 
 + (NSArray *)clusterPeaks:(NSArray *)peaks tolerance:(Float32)tolerance
@@ -203,12 +338,8 @@ static NSString *kFreqWt            =           @"freq_wt";
             NSDictionary *thatPeak = mutablePeaks[i];
             Float32 thatInterval = [thatPeak[kPeakInterval] floatValue];
             Float32 thatTempo = 60.0/thatInterval;
-            /*
+            
             if (thatTempo >= clusterMinTempo && thatTempo <= clusterMaxTempo ) {
-                [thisCluster addObject:thatPeak];
-            }
-             */
-            if (thatInterval >= clusterMinInterval && thatInterval <= clusterMaxInterval ) {
                 [thisCluster addObject:thatPeak];
             }
         }
@@ -333,17 +464,6 @@ static NSString *kFreqWt            =           @"freq_wt";
     return [NSArray arrayWithArray:results];
 }
 
-+ (NSArray *)sortWeightedPeaks:(NSArray *)weightedPeaks
-{
-    NSSortDescriptor *minimuzeMSESort = [NSSortDescriptor sortDescriptorWithKey:kMSE ascending:YES];
-    NSSortDescriptor *minimizeMSEDupleSort = [NSSortDescriptor sortDescriptorWithKey:kMSE_Du ascending:YES];
-    NSSortDescriptor *minimizeMSETupleSort = [NSSortDescriptor sortDescriptorWithKey:kMSE_Tu ascending:YES];
-    NSSortDescriptor *maximizeTempoWeightSort = [NSSortDescriptor sortDescriptorWithKey:kTempoWt ascending:NO];
-    NSSortDescriptor *minimizeBiasSort = [NSSortDescriptor sortDescriptorWithKey:kMSE_Bias ascending:YES];
-    
-    return [weightedPeaks sortedArrayUsingDescriptors:@[minimizeBiasSort,minimuzeMSESort,maximizeTempoWeightSort]];
-}
-
 + (Float32)detectTempoInRange:(NSRange)tempoRange withData:(NSArray *)data
 {
     Float32 kMinTempo = (Float32)tempoRange.location;
@@ -366,7 +486,53 @@ static NSString *kFreqWt            =           @"freq_wt";
                       getPeaksForObservations:observations
                       minInterval:kMinSixteenthInterval
                       peakThreshold:threshold];
-
+    
+    NSCountedSet *countedPeaksSet = [[NSCountedSet alloc]initWithArray:[peaks valueForKey:kPeakInterval]];
+    __block NSMutableArray *nodes = [NSMutableArray array];
+    [countedPeaksSet enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+        TempoDetectionNode *aNode = [TempoDetectionNode new];
+        aNode.interval = [(NSNumber *)obj floatValue];
+        aNode.count = (UInt32)[countedPeaksSet countForObject:obj];
+        aNode.tolerance = 0.05;
+        [nodes addObject:aNode];
+    }];
+    
+    TempoDetectionTree *bestTree = [TempoDetectionTree bestTreeForNodes:nodes];
+    
+    
+    /*
+    NSSortDescriptor *sortByCounts = [NSSortDescriptor sortDescriptorWithKey:@"interval" ascending:NO];
+    [nodes sortUsingDescriptors:@[sortByCounts]];
+    __block TempoDetectionTree *tree = [TempoDetectionTree new];
+    [tree insertNode:nodes[4]];
+    [nodes removeObjectAtIndex:4];
+    NSUInteger startingNodes = nodes.count;
+    __block NSMutableArray *uninserted = [NSMutableArray array];
+    [nodes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (![tree insertNode:(TempoDetectionNode *)obj]) {
+            [uninserted addObject:obj];
+        }
+    }];
+    NSUInteger numInserted = (startingNodes - uninserted.count);
+    NSLog(@"inserted %lu nodes in tree on first iteration",numInserted);
+    
+    nodes = uninserted.mutableCopy;
+    startingNodes = nodes.count;
+    uninserted = [NSMutableArray array];
+    [nodes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (![tree insertNode:(TempoDetectionNode *)obj]) {
+            [uninserted addObject:obj];
+        }
+    }];
+    
+    numInserted = (startingNodes - uninserted.count);
+    NSLog(@"inserted %lu nodes in tree on second iteration",numInserted);
+    
+    
+    
+    NSArray *sortedPeakLengths = [OfflineAudioFileProcessor sortedPeakLengths:peaks ascending:YES];
+    [OfflineAudioFileProcessor doSomethingWithSortedPeaksLengths:sortedPeakLengths];
+    
     NSArray *clusteredPeaks = [OfflineAudioFileProcessor clusterPeaks:peaks tolerance:0.005];
     
     NSArray *weightedPeaks = [OfflineAudioFileProcessor
@@ -379,7 +545,8 @@ static NSString *kFreqWt            =           @"freq_wt";
     NSLog(@"peaks by likelihood: %@",sortedWeightedPeaks);
     NSDictionary *mostLikely = sortedWeightedPeaks.firstObject;
     NSNumber *mostLikelyTempo = mostLikely[kTempoBPM];
-    return mostLikelyTempo.floatValue;
+     */
+    return 120.0;//mostLikelyTempo.floatValue;
 }
 
 + (OfflineAudioFileProcessor *)detectBPMOfFile:(NSString *)sourceFilePath allowedRange:(NSRange)tempoRange onProgress:(AudioProcessingProgressBlock)progressHandler onSuccess:(void (^)(Float32 detectedTempo))successHandler onFailure:(void(^)(NSError *error))failureHandler

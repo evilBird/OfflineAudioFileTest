@@ -7,11 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F20F12F11CA508E2003153EE /* Do I Wanna Know.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF71CA2460700F127AE /* Do I Wanna Know.wav */; };
+		F20F12F21CA508E2003153EE /* FloriDada.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF81CA2460700F127AE /* FloriDada.wav */; };
+		F20F12F31CA508E2003153EE /* Got a Backbeat.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */; };
 		F212471C1C8F53C100C54911 /* AudioSpectrumProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = F212471B1C8F53C100C54911 /* AudioSpectrumProcessor.m */; };
 		F212471F1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = F212471E1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m */; };
 		F21247271C8F731700C54911 /* OfflineAudioFileProcessor+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */; };
 		F21247291C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m in Sources */ = {isa = PBXBuildFile; fileRef = F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */; };
 		F212472B1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */; };
+		F29FB6941CA5B56200B42919 /* TempoDetectionNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F29FB6931CA5B56200B42919 /* TempoDetectionNode.m */; };
+		F29FB6971CA5B85200B42919 /* TempoDetectionTree.m in Sources */ = {isa = PBXBuildFile; fileRef = F29FB6961CA5B85200B42919 /* TempoDetectionTree.m */; };
 		F2A556DD1C9C789000F586C6 /* NSObject+AudioSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F2A556DC1C9C789000F586C6 /* NSObject+AudioSessionManager.m */; };
 		F2A556DF1C9C8E2A00F586C6 /* violin_test_file.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2A556DE1C9C8E2A00F586C6 /* violin_test_file.wav */; };
 		F2C31CF61CA1F6BA00F127AE /* Got a Backbeat.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */; };
@@ -38,6 +43,8 @@
 		F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */ = {isa = PBXBuildFile; fileRef = F2E4A2E01C8E48D500E86A5F /* faure_sicilienne_violin.48k.wav */; };
 		F2E60A3D1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */; };
 		F2E8ACD21C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m in Sources */ = {isa = PBXBuildFile; fileRef = F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */; };
+		F2EC0B051CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = F2EC0B041CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.m */; };
+		F2EC0B081CA4A7D100BFDBD7 /* BeatInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = F2EC0B071CA4A7D100BFDBD7 /* BeatInterval.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +65,10 @@
 		F21247261C8F731700C54911 /* OfflineAudioFileProcessor+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Test.m"; sourceTree = "<group>"; };
 		F21247281C8F75D900C54911 /* OfflineAudioFileProcessor+Compressor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Compressor.m"; sourceTree = "<group>"; };
 		F212472A1C8F798B00C54911 /* OfflineAudioFileProcessor+Normalizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Normalizer.m"; sourceTree = "<group>"; };
+		F29FB6921CA5B56200B42919 /* TempoDetectionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempoDetectionNode.h; sourceTree = "<group>"; };
+		F29FB6931CA5B56200B42919 /* TempoDetectionNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempoDetectionNode.m; sourceTree = "<group>"; };
+		F29FB6951CA5B85200B42919 /* TempoDetectionTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempoDetectionTree.h; sourceTree = "<group>"; };
+		F29FB6961CA5B85200B42919 /* TempoDetectionTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TempoDetectionTree.m; sourceTree = "<group>"; };
 		F2A556DA1C9C74F800F586C6 /* OfflineAudioFileProcessing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineAudioFileProcessing.h; sourceTree = "<group>"; };
 		F2A556DB1C9C789000F586C6 /* NSObject+AudioSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AudioSessionManager.h"; sourceTree = "<group>"; };
 		F2A556DC1C9C789000F586C6 /* NSObject+AudioSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AudioSessionManager.m"; sourceTree = "<group>"; };
@@ -93,6 +104,10 @@
 		F2E60A3C1C90C74900A58227 /* OfflineAudioFileProcessor+ConvenienceMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+ConvenienceMethods.m"; sourceTree = "<group>"; };
 		F2E8ACD01C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OfflineAudioFileProcessor+Analysis.h"; sourceTree = "<group>"; };
 		F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OfflineAudioFileProcessor+Analysis.m"; sourceTree = "<group>"; };
+		F2EC0B031CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SonaAudioFileMixPlayer.h; sourceTree = "<group>"; };
+		F2EC0B041CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SonaAudioFileMixPlayer.m; sourceTree = "<group>"; };
+		F2EC0B061CA4A7D100BFDBD7 /* BeatInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeatInterval.h; sourceTree = "<group>"; };
+		F2EC0B071CA4A7D100BFDBD7 /* BeatInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeatInterval.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +136,12 @@
 				F2A556DA1C9C74F800F586C6 /* OfflineAudioFileProcessing.h */,
 				F2E4A2DA1C8E486000E86A5F /* OfflineAudioFileProcessor.h */,
 				F2E4A2DB1C8E486000E86A5F /* OfflineAudioFileProcessor.m */,
+				F2EC0B061CA4A7D100BFDBD7 /* BeatInterval.h */,
+				F2EC0B071CA4A7D100BFDBD7 /* BeatInterval.m */,
+				F29FB6951CA5B85200B42919 /* TempoDetectionTree.h */,
+				F29FB6961CA5B85200B42919 /* TempoDetectionTree.m */,
+				F29FB6921CA5B56200B42919 /* TempoDetectionNode.h */,
+				F29FB6931CA5B56200B42919 /* TempoDetectionNode.m */,
 				F2E8ACD01C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.h */,
 				F2E8ACD11C9D171300C262BB /* OfflineAudioFileProcessor+Analysis.m */,
 				F2C920921C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m */,
@@ -175,6 +196,8 @@
 				F2E4A2B71C8E482500E86A5F /* AppDelegate.m */,
 				F2E4A2B91C8E482500E86A5F /* ViewController.h */,
 				F2E4A2BA1C8E482500E86A5F /* ViewController.m */,
+				F2EC0B031CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.h */,
+				F2EC0B041CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.m */,
 				F2C31CF71CA2460700F127AE /* Do I Wanna Know.wav */,
 				F2C31CF81CA2460700F127AE /* FloriDada.wav */,
 				F2C31CF51CA1F6BA00F127AE /* Got a Backbeat.wav */,
@@ -309,6 +332,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F20F12F11CA508E2003153EE /* Do I Wanna Know.wav in Resources */,
+				F20F12F21CA508E2003153EE /* FloriDada.wav in Resources */,
+				F20F12F31CA508E2003153EE /* Got a Backbeat.wav in Resources */,
 				F2E60A3A1C90BABF00A58227 /* faure_sicilienne_violin.48o.wav in Resources */,
 				F2E60A3B1C90BABF00A58227 /* faure_sicilienne_violin.48k.wav in Resources */,
 			);
@@ -321,7 +347,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2EC0B081CA4A7D100BFDBD7 /* BeatInterval.m in Sources */,
 				F2E60A351C8FE6DC00A58227 /* OfflineAudioFileProcessor+Freeverb.m in Sources */,
+				F2EC0B051CA4667C00BFDBD7 /* SonaAudioFileMixPlayer.m in Sources */,
+				F29FB6971CA5B85200B42919 /* TempoDetectionTree.m in Sources */,
 				F2E4A2BB1C8E482500E86A5F /* ViewController.m in Sources */,
 				F212471F1C8F6D4400C54911 /* AudioSpectrumProcessor+ProcessingBlocks.m in Sources */,
 				F2A556DD1C9C789000F586C6 /* NSObject+AudioSessionManager.m in Sources */,
@@ -330,6 +359,7 @@
 				F2C920901C9B514D00ED7A20 /* OfflineAudioFileProcessor+Functions.m in Sources */,
 				F2C920931C9B689900ED7A20 /* OfflineAudioFileProcessor+Raw2Wav.m in Sources */,
 				F2E4A2B81C8E482500E86A5F /* AppDelegate.m in Sources */,
+				F29FB6941CA5B56200B42919 /* TempoDetectionNode.m in Sources */,
 				F212471C1C8F53C100C54911 /* AudioSpectrumProcessor.m in Sources */,
 				F2E4A2DC1C8E486000E86A5F /* OfflineAudioFileProcessor.m in Sources */,
 				F2E4A2B51C8E482500E86A5F /* main.m in Sources */,

@@ -8,23 +8,29 @@
 
 #import "ViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "SonaAudioFileMixPlayer.h"
 #import "OfflineAudioFileProcessor+Functions.h"
 #import "AudioSpectrumProcessor.h"
 #import "NSObject+AudioSessionManager.h"
 #import "OfflineAudioFileProcessor+Analysis.h"
 
+#define ANALYZE_INSTEAD true
 
 
-@interface ViewController (){
-    AVAudioFrameCount kBufferSize;
-    NSMutableDictionary *vUserInfoDictionary;
-    NSMutableArray      *vUserInfoArray;
+@interface ViewController () <SonaAudioFileMixPlayerDelegate>
+{
+    AVAudioFrameCount   kBufferSize;
+    Float32             vDetectedFileBPM;
+    Float32             vDetectedUserBPM;
+    Float32             vCalculatedPlaybackRate;
+    NSMutableArray      *vTapIntervals;
+    NSDate              *vPreviousTapEventDate;
+    NSUInteger           vTapIntervalIndex;
 }
 
 @property (nonatomic,strong)                        OfflineAudioFileProcessor       *myProcessor;
 @property (nonatomic,strong)                        NSString                        *myRawFilePath;
-@property (nonatomic,strong)                        AVAudioPlayer                   *audioPlayerA;
-@property (nonatomic,strong)                        AVAudioPlayer                   *audioPlayerB;
+@property (nonatomic,strong)                        SonaAudioFileMixPlayer          *filePlayer;
 @property (strong, nonatomic) IBOutlet              UILabel                         *progressLabel;
 @property (strong, nonatomic) IBOutlet              UISlider                        *crossFadeSlider;
 
@@ -34,6 +40,7 @@
 - (IBAction)crossFadeSliderAction:(id)sender;
 - (IBAction)pauseButtonAction:(id)sender;
 - (IBAction)cancelButtonAction:(id)sender;
+- (IBAction)tapTempAction:(id)sender;
 
 @end
 
@@ -42,45 +49,45 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     kBufferSize = 1024;
-    //[OfflineAudioFileProcessor deleteTempFilesForFile:[self.myRawFilePath lastPathComponent]];
-    [self defaultUISetup];
-    //[self startPlaybackAudioSessionError:nil];
+    
+    if (ANALYZE_INSTEAD == true) {
+        [self analysisUISetup];
+    }else{
+        [self defaultUISetup];
+    }
     
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-#define ANALYZE_INSTEAD 1
-
 - (void)startAnalyzing
 {
+    [self processorWillBeginProcessing];
+
     NSString *filePath = [ViewController doIWannaKnowFilePath];
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+    
     __weak ViewController *weakself = self;
     
     self.myProcessor = [OfflineAudioFileProcessor detectBPMOfFile:filePath allowedRange:NSRangeFromString(@"30, 180") onProgress:^(double progress) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = [NSString stringWithFormat:@"DETECT BPM PROGRESS: %.2f",progress];
+            [weakself updateProgress:progress];
         });
     } onSuccess:^(Float32 detectedTempo) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = [NSString stringWithFormat:@"DETECTED BPM: %.1f",detectedTempo];
+            [weakself analysisOfFile:fileURL didSucceedWithTempo:detectedTempo];
         });
     } onFailure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakself.progressLabel.text = [NSString stringWithFormat:@"DETECT BPM FAILED"];
+            [weakself processorDidFailWithError:error];
         });
     }];
 }
-
 
 - (void)startProcessing
 {
     __weak ViewController *weakself = self;
     [self processorWillBeginProcessing];
-    
-    if (ANALYZE_INSTEAD) {
-        [self startAnalyzing];
-        return;
-    }
+
     self.myRawFilePath = [ViewController hugeRawAccompFilePath];
 
     self.myProcessor = [OfflineAudioFileProcessor convertAndProcessRawFile:self.myRawFilePath
@@ -107,9 +114,9 @@
     
     UISlider *slider = (UISlider *)sender;
     double value = slider.value;
-    if (self.audioPlayerA && !self.audioPlayerB) {
-        self.audioPlayerA.volume = value;
-    }else if (self.audioPlayerA && self.audioPlayerB){
+    if (self.filePlayer.player1 && !self.filePlayer.player2) {
+        self.filePlayer.player1.volume = value;
+    }else if (self.filePlayer.player1 && self.filePlayer.player2){
         [self crossFadeWithSliderValue:value];
     }
 }
@@ -121,8 +128,8 @@
     double scaledCosValue = (cosValue+1.0)*0.5;
     double fileAVolume = 1.0-scaledCosValue;
     double fileBVolume = scaledCosValue;
-    self.audioPlayerA.volume = fileAVolume;
-    self.audioPlayerB.volume = fileBVolume;
+    self.filePlayer.player1.volume = fileAVolume;
+    self.filePlayer.player2.volume = fileBVolume;
 }
 
 - (IBAction)pauseButtonAction:(id)sender {
@@ -135,19 +142,78 @@
         self.pauseButton.selected = NO;
         self.progressLabel.text = @"RESUMING...";
         [self.myProcessor resume];
+    }else if (self.myProcessor.isDone && ANALYZE_INSTEAD == true){
+        if (self.filePlayer.isPlaying) {
+            [self.filePlayer stop];
+            self.pauseButton.selected = NO;
+        }else{
+            [self.filePlayer play];
+            self.pauseButton.selected = YES;
+        }
     }
 }
 
 - (IBAction)cancelButtonAction:(id)sender {
     
     if (!self.myProcessor) {
-        [self startProcessing];
+        
+        if (ANALYZE_INSTEAD == true) {
+            [self startAnalyzing];
+        }else{
+            [self startProcessing];
+        }
+        
     }else if (self.myProcessor.isRunning || self.myProcessor.isPaused ){
         [self.myProcessor cancel];
         self.myProcessor = nil;
         self.progressLabel.text = @"CANCELLED";
-        [self defaultUISetup];
+        
+        if (ANALYZE_INSTEAD == true) {
+            [self analysisUISetup];
+        }else{
+            [self defaultUISetup];
+        }
     }
+}
+
+- (IBAction)tapTempAction:(id)sender {
+    
+    if (ANALYZE_INSTEAD == true && self.myProcessor.isDone && self.filePlayer.isPlaying){
+        
+        [self tapTempoEvent];
+    }
+}
+
+- (void)tapTempoEvent
+{
+    NSTimeInterval maxUserInterval = 2.0;
+    NSUInteger kTapIntervalBufferSize = 3;
+    
+    if (!vPreviousTapEventDate) {
+        vPreviousTapEventDate = [NSDate date];
+        vTapIntervals = [NSMutableArray arrayWithCapacity:kTapIntervalBufferSize];
+        vTapIntervalIndex = 0;
+        return;
+    }
+    NSDate *now = [NSDate date];
+    NSTimeInterval interval = [now timeIntervalSinceDate:vPreviousTapEventDate];
+    vPreviousTapEventDate = now;
+    if (interval >= maxUserInterval) {
+        return;
+    }
+    
+    [vTapIntervals insertObject:@(interval) atIndex:vTapIntervalIndex];
+    NSLog(@"intervals: %@",vTapIntervals);
+    vTapIntervalIndex++;
+    vTapIntervalIndex = ( vTapIntervalIndex >= kTapIntervalBufferSize ) ? ( 0 ) : ( vTapIntervalIndex );
+    
+    NSNumber *averageInterval = [vTapIntervals valueForKeyPath:@"@avg.self"];
+    Float32 averageTempo = 60.0/averageInterval.floatValue;
+    vDetectedUserBPM = averageTempo;
+    vCalculatedPlaybackRate = vDetectedUserBPM/vDetectedFileBPM;
+    self.progressLabel.text = [NSString stringWithFormat:@"User Tempo: %.1f...Rate = %.2f",vDetectedUserBPM,vCalculatedPlaybackRate];
+    self.filePlayer.timePitch1.rate = vCalculatedPlaybackRate;
+    
 }
 
 #pragma mark - UI Update Helpers
@@ -160,6 +226,15 @@
     self.pauseButton.hidden = YES;
 }
 
+- (void)analysisUISetup
+{
+    [self.cancelButton setTitle:@"Analyze" forState:UIControlStateNormal];
+    self.cancelButton.hidden = NO;
+    self.crossFadeSlider.hidden = YES;
+    self.pauseButton.hidden = YES;
+    self.progressLabel.text = @"Tap 'Analyze' to start";
+}
+
 - (void)processorWillBeginProcessing
 {
     [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
@@ -167,25 +242,40 @@
     self.crossFadeSlider.hidden = YES;
     self.pauseButton.hidden = NO;
 }
+
 - (void)updateProgress:(double)progress
-                       {
-                           
-                       }
+{
+    self.progressLabel.text = [NSString stringWithFormat:@"Progress: %.2f",progress];
+}
 - (void)processorDidFailWithError:(NSError *)error
 {
     self.progressLabel.text = @"ERROR";
     NSLog(@"ERROR: %@",error);
     [self defaultUISetup];
 }
-                       
-                       
+
+- (void)analysisOfFile:(NSURL *)audioFile didSucceedWithTempo:(Float32)tempo
+{
+    [self.cancelButton setTitle:@"Tap Tempo" forState:UIControlStateNormal];
+    [self.pauseButton setTitle:@"Play" forState:UIControlStateNormal];
+    [self.pauseButton setTitle:@"Stop" forState:UIControlStateSelected];
+    
+    self.progressLabel.text = [NSString stringWithFormat:@"BPM: %.f",roundf(tempo)];
+    vDetectedFileBPM = tempo;
+    self.cancelButton.hidden = NO;
+    self.pauseButton.hidden = NO;
+    [self playAudioFile:audioFile];
+}
 
 - (void)processorDidSucceedWithResult:(NSURL *)resultFile
 {
     self.cancelButton.hidden = YES;
     self.pauseButton.hidden = YES;
     NSLog(@"SUCCESS: %@",resultFile.path);
-    NSError *err = [self playAudioFile:resultFile];
+    
+    NSError *err = nil;
+    [self playAudioFile:resultFile];
+    
     if (err) {
         return [self processorDidFailWithError:err];
     }
@@ -194,97 +284,52 @@
     self.progressLabel.text = @"SUCCESS! PLAYING RESULT.";
 }
 
-        
-
 #pragma mark - Audio Playback Helpers
 
-- (void)startPlaybackAudioSessionError:(NSError *__autoreleasing *)error
+
+- (void)playAudioFile:(NSURL *)fileURL
+{
+    self.filePlayer = nil;
+    self.crossFadeSlider.hidden = YES;
+    self.pauseButton.selected = YES;
+    self.pauseButton.enabled = NO;
+    self.filePlayer = [[SonaAudioFileMixPlayer alloc]initWithFile:fileURL.path delegate:self];
+}
+
+- (void)playAudioFileA:(NSURL *)fileAURL andAudioFileB:(NSURL *)fileBURL
+{
+    self.filePlayer = nil;
+    self.crossFadeSlider.hidden = NO;
+    self.pauseButton.hidden = YES;
+    self.filePlayer = [[SonaAudioFileMixPlayer alloc]initWithFile1:fileAURL.path file2:fileBURL.path delegate:self];
+    
+}
+
+#pragma mark - SonaAudioFileMixPlayerDelegate
+
+- (void)audioFileMixPlayer:(id)sender didFailWithError:(NSError *)error
 {
     __weak ViewController *weakself = self;
-    __block BOOL playerAWasPlaying = NO;
-    __block BOOL playerBWasPlaying = NO;
-    NSError *err = nil;
-    [self startDefaultAudioSessionWithCategory:AVAudioSessionCategoryPlayback
-                                onInterruption:^(AVAudioSessionInterruptionType type, AVAudioSessionInterruptionOptions shouldResume) {
-                                    if (type == AVAudioSessionInterruptionTypeBegan) {
-                                        NSLog(@"Session Interruption");
-                                        playerAWasPlaying = ( weakself.audioPlayerA.isPlaying );
-                                        if (playerAWasPlaying) {
-                                            [weakself.audioPlayerA pause];
-                                        }
-                                        playerBWasPlaying =  ( weakself.audioPlayerB.isPlaying );
-                                        if (playerBWasPlaying) {
-                                            [weakself.audioPlayerB pause];
-                                        }
-                                    }else{
-                                        NSLog(@"Session interruption ended");
-                                        if (shouldResume) {
-                                            if (playerAWasPlaying) {
-                                                [weakself.audioPlayerA play];
-                                            }
-                                            if (playerBWasPlaying) {
-                                                [weakself.audioPlayerB play];
-                                            }
-                                        }
-                                    }
-                                }
-                               onBackgrounding:^(BOOL isBackgrounded, BOOL wasBackgrounded){
-                                   if (isBackgrounded) {
-                                       NSLog(@"entering background");
-                                   }else{
-                                       NSLog(@"exiting background");
-                                   }
-                               }
-                                         error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakself processorDidFailWithError:error];
+    });
 }
 
-- (NSError *)playAudioFile:(NSURL *)fileURL
+- (void)audioFileMixPlayerFinishedLoading:(id)sender
 {
-    NSError *err = nil;
-    [self startPlaybackAudioSessionError:&err];
-    if (err) {
-        return err;
+    if (ANALYZE_INSTEAD) {
+        self.pauseButton.enabled = YES;
+        [self.filePlayer play];
+        self.pauseButton.selected = YES;
+    }else{
+        [self.filePlayer play];
     }
-    self.audioPlayerA = [[AVAudioPlayer alloc]initWithContentsOfURL:fileURL error:&err];
-    self.audioPlayerA.volume = 1.0;
-    self.crossFadeSlider.hidden = YES;
-    [self.audioPlayerA play];
-    return nil;
 }
 
-- (NSError *)playAudioFileA:(NSURL *)fileAURL andAudioFileB:(NSURL *)fileBURL
+- (void)audioFileMixPlayerFinishedPlayback:(id)sender
 {
-    NSParameterAssert(fileAURL);
-    NSParameterAssert(fileBURL);
-    NSError *err = nil;
-    [self startPlaybackAudioSessionError:&err];
-    if (err) {
-        return err;
-    }
-    self.audioPlayerA = [[AVAudioPlayer alloc]initWithContentsOfURL:fileAURL error:&err];
-    self.audioPlayerA.volume = 0.5;
-    
-    if (err) {
-        return err;
-    }
-    
-    self.audioPlayerB = [[AVAudioPlayer alloc]initWithContentsOfURL:fileBURL error:&err];
-    self.audioPlayerB.volume = 0.5;
-    if (err) {
-        return err;
-    }
-    
-    [self.audioPlayerA play];
-    [self.audioPlayerB play];
-    
-    return nil;
+    self.pauseButton.selected = NO;
 }
-
 
 #pragma mark - Helpers
 
@@ -299,7 +344,6 @@
     NSString *fileName = @"Do I Wanna Know.wav";
     return [ViewController bundlePathForFile:fileName];
 }
-
 
 + (NSString *)americanSteelFilePath
 {

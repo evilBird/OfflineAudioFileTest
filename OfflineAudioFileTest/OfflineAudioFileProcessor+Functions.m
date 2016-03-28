@@ -243,12 +243,35 @@ Float32 interval_triple_likelihood(Float32 value1, Float32 value2)
     return (1.0 - integral_error);
 }
 
+Float32 round_float_to_sig_digs(Float32 myFloat, UInt32 sigDigs)
+{
+    Float32 pow10np = powf(10., (Float32)sigDigs);
+    Float32 result = roundf(myFloat*pow10np) / pow10np;
+    return result;
+}
+
 Float32 compare_beats_as_duples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio)
 {
-    if (beat1_length <= 0.0 || beat2_length <= 0.0) return 1.0;
-    if (beat1_length == beat2_length ) return 0.0;
+    beat1_length = round_float_to_sig_digs(beat1_length, 3);
+    beat2_length = round_float_to_sig_digs(beat2_length, 3);
+    
+    if (beat1_length <= 0.0 || beat2_length <= 0.0) {
+        if (beat_ratio) {
+            *beat_ratio = 0.0;
+        }
+        return 1.0;
+    }
+    
+    if (beat1_length == beat2_length ) {
+        if (beat_ratio) {
+            *beat_ratio = 1.0;
+        }
+        
+        return 0.0;
+    }
     
     BOOL beat1_is_longer = ( beat1_length > beat2_length );
+    
     Float32 length_ratio;
     
     if (beat1_is_longer){
@@ -257,23 +280,42 @@ Float32 compare_beats_as_duples_get_error(Float32 beat1_length, Float32 beat2_le
         length_ratio = beat2_length/beat1_length;
     }
     
-    Float32 duple_ratio = log2f(length_ratio) - log2f(2.0) + 3.0;
+    Float32 duple_err = log2f(length_ratio) - log2f(2.0) + 1.0;
+    
+    Float32 e = round_float_to_sig_digs(duple_err, 1);
+    
+    Float32 duple_ratio = powf(2.0, e);
     
     Float32 my_beat_ratio = ( beat1_is_longer ) ? ( duple_ratio ) : ( 1.0/duple_ratio );
     
     if (beat_ratio) {
-        *beat_ratio = my_beat_ratio;
+        *beat_ratio = round_float_to_sig_digs(my_beat_ratio, 2);
     }
     
     Float32 error = duple_ratio-roundf(duple_ratio);
-    
-    return error;
+    Float32 err = (duple_err-duple_ratio);
+    return error*my_beat_ratio;
 }
 
 Float32 compare_beats_as_tuples_get_error(Float32 beat1_length, Float32 beat2_length, Float32 *beat_ratio)
 {
-    if (beat1_length <= 0.0 || beat2_length <= 0.0) return 1.0;
-    if (beat1_length == beat2_length ) return 0.0;
+    beat1_length = round_float_to_sig_digs(beat1_length, 3);
+    beat2_length = round_float_to_sig_digs(beat2_length, 3);
+    
+    if (beat1_length <= 0.0 || beat2_length <= 0.0) {
+        if (beat_ratio) {
+            *beat_ratio = 0.0;
+        }
+        return 1.0;
+    }
+    
+    if (beat1_length == beat2_length ) {
+        if (beat_ratio) {
+            *beat_ratio = 1.0;
+        }
+        
+        return 0.0;
+    }
     
     BOOL beat1_is_longer = ( beat1_length > beat2_length );
     Float32 length_ratio;
@@ -284,15 +326,21 @@ Float32 compare_beats_as_tuples_get_error(Float32 beat1_length, Float32 beat2_le
         length_ratio = beat2_length/beat1_length;
     }
     
-    Float32 tuple_ratio = log2f(length_ratio) - log2f(3.0) + 3.0;
+    Float32 tuple_err = log2f(length_ratio) - log2f(3.0) + 1.0;
+    
+    Float32 e = round_float_to_sig_digs(tuple_err, 1);
+    
+    Float32 tuple_ratio = powf(3.0, e);
+    
     Float32 my_beat_ratio = ( beat1_is_longer ) ? ( tuple_ratio ) : ( 1.0/tuple_ratio );
     
     if (beat_ratio) {
-        *beat_ratio = my_beat_ratio;
+        *beat_ratio = round_float_to_sig_digs(my_beat_ratio, 2);
     }
     
     Float32 error = tuple_ratio-roundf(tuple_ratio);
-    return error;
+    Float32 err = (tuple_err - tuple_ratio);
+    return error * my_beat_ratio;
 }
 
 Float32 interval_duple_likelihood(Float32 value1, Float32 value2)
