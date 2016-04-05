@@ -16,7 +16,6 @@
 
 #define ANALYZE_INSTEAD true
 
-
 @interface ViewController () <SonaAudioFileMixPlayerDelegate>
 {
     AVAudioFrameCount   kBufferSize;
@@ -25,7 +24,11 @@
     Float32             vCalculatedPlaybackRate;
     NSMutableArray      *vTapIntervals;
     NSDate              *vPreviousTapEventDate;
-    NSUInteger           vTapIntervalIndex;
+    NSUInteger          vTapIntervalIndex;
+    
+    
+    NSString            *kPathOfFileToAnalyze;
+    
 }
 
 @property (nonatomic,strong)                        OfflineAudioFileProcessor       *myProcessor;
@@ -48,6 +51,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    kPathOfFileToAnalyze = [ViewController doIWannaKnowFilePath];
+    //kPathOfFileToAnalyze = [ViewController floriDadaFilePath];
+    //kPathOfFileToAnalyze = [ViewController americanSteelFilePath];
+
     kBufferSize = 1024;
     
     if (ANALYZE_INSTEAD == true) {
@@ -62,8 +70,7 @@
 - (void)startAnalyzing
 {
     [self processorWillBeginProcessing];
-
-    NSString *filePath = [ViewController doIWannaKnowFilePath];
+    NSString *filePath = kPathOfFileToAnalyze;
     NSURL *fileURL = [NSURL fileURLWithPath:filePath];
     
     __weak ViewController *weakself = self;
