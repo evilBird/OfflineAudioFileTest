@@ -187,31 +187,23 @@
 - (void)tapTempoEvent
 {
     NSTimeInterval maxUserInterval = 2.0;
-    NSUInteger kTapIntervalBufferSize = 3;
     
     if (!vPreviousTapEventDate) {
         vPreviousTapEventDate = [NSDate date];
-        vTapIntervals = [NSMutableArray arrayWithCapacity:kTapIntervalBufferSize];
-        vTapIntervalIndex = 0;
         return;
     }
+    
     NSDate *now = [NSDate date];
     NSTimeInterval interval = [now timeIntervalSinceDate:vPreviousTapEventDate];
     vPreviousTapEventDate = now;
-    if (interval >= maxUserInterval) {
+    
+    if (interval==0.0 || interval >= maxUserInterval) {
         return;
     }
     
-    [vTapIntervals insertObject:@(interval) atIndex:vTapIntervalIndex];
-    NSLog(@"intervals: %@",vTapIntervals);
-    vTapIntervalIndex++;
-    vTapIntervalIndex = ( vTapIntervalIndex >= kTapIntervalBufferSize ) ? ( 0 ) : ( vTapIntervalIndex );
-    
-    NSNumber *averageInterval = [vTapIntervals valueForKeyPath:@"@avg.self"];
-    Float32 averageTempo = 60.0/averageInterval.floatValue;
-    vDetectedUserBPM = averageTempo;
+    vDetectedUserBPM = 60.0/interval;
     vCalculatedPlaybackRate = vDetectedUserBPM/vDetectedFileBPM;
-    self.progressLabel.text = [NSString stringWithFormat:@"User Tempo: %.1f...Rate = %.2f",vDetectedUserBPM,vCalculatedPlaybackRate];
+    self.progressLabel.text = [NSString stringWithFormat:@"Tapped Tempo: %.f, Playback Rate = %.2f",vDetectedUserBPM,vCalculatedPlaybackRate];
     self.filePlayer.timePitch1.rate = vCalculatedPlaybackRate;
     
 }

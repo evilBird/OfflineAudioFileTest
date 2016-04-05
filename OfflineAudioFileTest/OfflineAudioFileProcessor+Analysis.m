@@ -498,55 +498,8 @@ static NSString *kDebuggingKey = @"debugging";
     }];
     
     TempoDetectionTree *bestTree = [TempoDetectionTree bestTreeForNodes:nodes];
-    
-    
-    /*
-    NSSortDescriptor *sortByCounts = [NSSortDescriptor sortDescriptorWithKey:@"interval" ascending:NO];
-    [nodes sortUsingDescriptors:@[sortByCounts]];
-    __block TempoDetectionTree *tree = [TempoDetectionTree new];
-    [tree insertNode:nodes[4]];
-    [nodes removeObjectAtIndex:4];
-    NSUInteger startingNodes = nodes.count;
-    __block NSMutableArray *uninserted = [NSMutableArray array];
-    [nodes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (![tree insertNode:(TempoDetectionNode *)obj]) {
-            [uninserted addObject:obj];
-        }
-    }];
-    NSUInteger numInserted = (startingNodes - uninserted.count);
-    NSLog(@"inserted %lu nodes in tree on first iteration",numInserted);
-    
-    nodes = uninserted.mutableCopy;
-    startingNodes = nodes.count;
-    uninserted = [NSMutableArray array];
-    [nodes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (![tree insertNode:(TempoDetectionNode *)obj]) {
-            [uninserted addObject:obj];
-        }
-    }];
-    
-    numInserted = (startingNodes - uninserted.count);
-    NSLog(@"inserted %lu nodes in tree on second iteration",numInserted);
-    
-    
-    
-    NSArray *sortedPeakLengths = [OfflineAudioFileProcessor sortedPeakLengths:peaks ascending:YES];
-    [OfflineAudioFileProcessor doSomethingWithSortedPeaksLengths:sortedPeakLengths];
-    
-    NSArray *clusteredPeaks = [OfflineAudioFileProcessor clusterPeaks:peaks tolerance:0.005];
-    
-    NSArray *weightedPeaks = [OfflineAudioFileProcessor
-                              calculateWeightedPeaks:clusteredPeaks
-                              minQuarterInterval:kMinQuarterInterval
-                              maxQuarterInterval:kMaxQuarterInterval];
-    
-    NSSortDescriptor *llSort = [NSSortDescriptor sortDescriptorWithKey:kLikelihood ascending:NO];
-    NSArray *sortedWeightedPeaks = [weightedPeaks sortedArrayUsingDescriptors:@[llSort]];
-    NSLog(@"peaks by likelihood: %@",sortedWeightedPeaks);
-    NSDictionary *mostLikely = sortedWeightedPeaks.firstObject;
-    NSNumber *mostLikelyTempo = mostLikely[kTempoBPM];
-     */
-    return 120.0;//mostLikelyTempo.floatValue;
+    Float32 bestTempo = 60.0/bestTree.root.interval;
+    return bestTempo;;
 }
 
 + (OfflineAudioFileProcessor *)detectBPMOfFile:(NSString *)sourceFilePath allowedRange:(NSRange)tempoRange onProgress:(AudioProcessingProgressBlock)progressHandler onSuccess:(void (^)(Float32 detectedTempo))successHandler onFailure:(void(^)(NSError *error))failureHandler
